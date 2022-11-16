@@ -1,10 +1,10 @@
 from django.http import JsonResponse, HttpResponse
 import requests
-from .models import Genre, Movie, Actor
+from .models import Genre, Movie, Actor, Director
 
 API_KEY = '65aefd05a6499f9a39973a6de70bb586'
 GENRE_URL = 'https://api.themoviedb.org/3/genre/movie/list'
-POPULAR_MOVIE_URL = 'https://api.themoviedb.org/3/movie/'
+POPULAR_MOVIE_URL = 'https://api.themoviedb.org/3/movie/popular'
 
 def tmdb_genres():
     response = requests.get(
@@ -59,6 +59,28 @@ def get_actors(movie):
         if movie.actors.count() == 5:       # 5명의 배우 정보만 저장
             break
 
+def get_director(movie):
+    movie_id = movie.id
+    response = requests.get(
+        f'https://api.themoviedb.org/3/movie/{movie_id}/credits',
+        params={
+            'api_key': API_KEY,
+            'language': 'ko-kr',
+        }
+    ).json()
+    
+    for person in response.get('crew'):
+        if person.get('job') != 'Director': continue
+        director_id = person.get('id')
+        if not Director.objects.filter(pk=director_id).exists():
+            director = Director.objects.create(
+                id=person.get('id'),
+                name=person.get('name')
+            )
+        movie.director.add(director_id)
+        if movie.director.count() == 1:       # 감독 1명 정보만 저장
+            break
+
 def get_runtime_value(movie_dict):    
     movie_id = movie_dict.get('id')
     response = requests.get(
@@ -68,18 +90,52 @@ def get_runtime_value(movie_dict):
             'language': 'ko-kr',
         }
     ).json()
-    for video in response.get('results'):
-        if video.get('site') == 'YouTube':
-            return video.get('key')
+    runtime_value = response.get('runtime')
+    print(runtime_value)
+    if runtime_value:
+        return runtime_value
+    return 0
+
+def get_tagline(movie_dict):    
+    movie_id = movie_dict.get('id')
+    response = requests.get(
+        f'https://api.themoviedb.org/3/movie/{movie_id}',
+        params={
+            'api_key': API_KEY,
+            'language': 'ko-kr',
+        }
+    ).json()
+    tagline = response.get('tagline')
+    if tagline:
+        return tagline
     return 'nothing'
+
+def get_production_countries(movie_dict):    
+    movie_id = movie_dict.get('id')
+    response = requests.get(
+        f'https://api.themoviedb.org/3/movie/{movie_id}',
+        params={
+            'api_key': API_KEY,
+            'language': 'ko-kr',
+        }
+    ).json()
+    production_countries = response.get('production_countries')
+    if len(production_countries) == 0: return ("", "")
+    iso = production_countries[0].get('iso_3166_1')
+    name = production_countries[0].get('name')
+    print(iso)
+    print(name)
+    if iso or name:
+        return (iso, name)
+    return ("", "")
 
 def movie_data(page=1):
     response = requests.get(
         POPULAR_MOVIE_URL,
-        movie_id = page,
         params={
             'api_key': API_KEY,
-            'language': 'ko-kr',     
+            'language': 'ko-kr',
+            'page': page,     
         }
     ).json()
 
@@ -88,6 +144,8 @@ def movie_data(page=1):
         # 유투브 key 조회
         youtube_key = get_youtube_key(movie_dict)
         runtime_value = get_runtime_value(movie_dict)
+        tagline = get_tagline(movie_dict)
+        production_countries = get_production_countries(movie_dict)
 
         movie = Movie.objects.create(
             id=movie_dict.get('id'),
@@ -99,20 +157,24 @@ def movie_data(page=1):
             overview=movie_dict.get('overview'),
             poster_path=movie_dict.get('poster_path'),   
             youtube_key=youtube_key,
-            runtime=runtime_value         
+            runtime=runtime_value,
+            tagline=tagline,
+            production_countries=production_countries[0],
+            production_countries_name=production_countries[1],
         )
         for genre_id in movie_dict.get('genre_ids', []):
             movie.genres.add(genre_id)
 
         # 배우들 저장
         get_actors(movie)
+        get_director(movie)
         print('>>>', movie.title, '==>', movie.youtube_key)    
-
 
 def tmdb_data(request):
     Genre.objects.all().delete()
     Actor.objects.all().delete()
     Movie.objects.all().delete()
+    Director.objects.all().delete()
 
     tmdb_genres()
     for i in range(1, 6):
