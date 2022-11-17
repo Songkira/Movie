@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Genre, Actor, Director, Movie
+from .models import Genre, Actor, Director, Movie, Comment
 
 class MovieSerializer(serializers.ModelSerializer):
 
@@ -25,4 +25,9 @@ class DirectorSerializer(serializers.ModelSerializer):
         model = Director
         fields = '__all__'
 
+class CommentSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Comment
+        # fields = ( 'id','content','user','username', 'movie')
+        fields = ('content',)

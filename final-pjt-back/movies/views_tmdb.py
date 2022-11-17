@@ -129,7 +129,7 @@ def get_production_countries(movie_dict):
         return (iso, name)
     return ("", "")
 
-def movie_data(page=1):
+def movie_data(page=1):     # 2. Movie popular 데이터를 불러와서 movie DB 형태로 정리하는 함수
     response = requests.get(
         POPULAR_MOVIE_URL,
         params={
@@ -142,12 +142,12 @@ def movie_data(page=1):
     for movie_dict in response.get('results'):
         if not movie_dict.get('release_date'): continue   # 없는 필드 skip
         # 유투브 key 조회
-        youtube_key = get_youtube_key(movie_dict)
-        runtime_value = get_runtime_value(movie_dict)
-        tagline = get_tagline(movie_dict)
-        production_countries = get_production_countries(movie_dict)
+        youtube_key = get_youtube_key(movie_dict)       # 3. 유튜브 키 따로 가져오기
+        runtime_value = get_runtime_value(movie_dict)   # 3. 런타임 정보 따로 불러오기
+        tagline = get_tagline(movie_dict)               # 3. 태그라인 정보 따로 불러오기
+        production_countries = get_production_countries(movie_dict)     # 3. 제조국 정보 따로 불러오기
 
-        movie = Movie.objects.create(
+        movie = Movie.objects.create(       # 4. movie 정보 만들기
             id=movie_dict.get('id'),
             title=movie_dict.get('title'),
             release_date=movie_dict.get('release_date'),
@@ -170,7 +170,7 @@ def movie_data(page=1):
         get_director(movie)
         print('>>>', movie.title, '==>', movie.youtube_key)    
 
-def tmdb_data(request):
+def tmdb_data(request):     # 1. DB 처음 불러올 때
     Genre.objects.all().delete()
     Actor.objects.all().delete()
     Movie.objects.all().delete()
