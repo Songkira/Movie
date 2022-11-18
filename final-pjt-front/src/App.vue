@@ -1,14 +1,13 @@
 <template>
   <div id="app">
     <nav class="nav justify-content-end">
-      <h3 style="color: white;">안녕하세요. {{ this.$store.state.username }} 님.</h3>
+      <h4 style="color: white;">안녕하세요. {{ this.$store.state.username }} 님.</h4>
       <router-link :to="{ name: 'MovieView' }">Movie</router-link>&nbsp;&nbsp;
       <router-link :to="{ name: 'RandomView' }">Random</router-link>&nbsp;&nbsp;
       <router-link :to="{ name: 'WatchListView' }">WatchList</router-link>&nbsp;&nbsp;
       <router-link :to="{ name: 'MyPage', params: { personname: this.$store.state.username } }">MyPage</router-link>&nbsp;&nbsp;
       <router-link :to="{ name: 'SignUp' }">SignUp</router-link>&nbsp;&nbsp;
       <router-link :to="{ name: 'Login' }">Login</router-link>&nbsp;&nbsp;
-      <a @click="getUsers">test3</a>&nbsp;&nbsp;
       <a @click="logOut">Logout</a>&nbsp;&nbsp;
     </nav>
     <router-view/>
@@ -16,14 +15,13 @@
 </template>
 
 <script>
-import axios from 'axios'
-const API_URL = 'http://127.0.0.1:8000'
-const personname = 'test1'
+// import axios from 'axios'
+// const API_URL = 'http://127.0.0.1:8000'
+// const personname = 'test1'
 export default {
   name: 'App',
   created() {
     this.movieGet()
-    // this.username = this.$store.state.username
   },
   methods: {
     movieGet() {
@@ -31,29 +29,6 @@ export default {
     },
     logOut() {
       this.$store.dispatch('logOut')
-    },
-    getUsers() {
-      axios({
-        method: 'get',
-        url: `${API_URL}/accounts-custom/usersinfo/`,
-      })
-        .then(res => {
-          const prmts = { pk: -1, personname: null }
-          console.log(res)
-          for (let i=0; i < res.data.length; i++) {
-            if (res.data[i].username === personname) {
-              prmts.pk = res.data[i].id
-              prmts.personname = res.data[i].username
-              break
-            }
-          }
-          console.log(prmts)
-          this.$router.push({name: 'MyPage', params: prmts})
-          console.log(res.data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
     }
   }
 }

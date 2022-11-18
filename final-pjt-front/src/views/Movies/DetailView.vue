@@ -5,10 +5,13 @@
         <img :src="image_url" class="card-img-top" alt="movie_image">
       </div>
       <div>
-        <p>{{ movie?.title }}</p>
-        <!-- <p>{{ movie?. }}</p> -->
-        <p>국가: {{ movie?.production_countries }}</p>
+        <h4>{{ movie?.title }}</h4>
+        <p>국가: {{ movie?.production_countries_name }}</p>
+        <h6>{{ movie?.director.name }}</h6>
       </div>
+      <span v-for="(genre, idx) in movie.genres" :key="idx">
+        <span class="badge text-bg-light" style="margin: 3%;">{{ genre.name }}</span>
+      </span>
       <div>
         <p>{{ movie?.overview }}</p>
       </div>
@@ -24,11 +27,15 @@
       </div>
       <div id="star-jjim" style="padding: 5px 0px 5px; margin: 1%;height: 15%; background-color: antiquewhite;">
         <span>
-          <input type="submit" value="별점 평가하기">
+          <select name="rate" v-model="MymovieRate" id="rate">
+            <option class="content-font" style="color:black;" :value="rate" v-for="(rate, idx) in this.$store.state.reviewRate" :key="idx">{{ rate }}</option>
+          </select>
+          <input type="submit" value="별점 평가하기" @click="starRate">
+          {{ this.Star === 0 ? this.movie.vote_average: this.Star }}
         </span>
         |
         <span>
-          <input type="submit" value="찜">  
+          <button @click="likes" type="button" class="btn btn-light">LIKE</button>  
         </span>
       </div>
       <div id="comment-input" style="padding: 5px 0px 5px; margin: 1%; height: 15%; background-color: antiquewhite;">
@@ -37,7 +44,7 @@
         <button @click="createComment">제출</button>
       </div>
       <div id="comment-box" style="height: 45%; margin: 1%;background-color: antiquewhite;">
-        <MyCommentsList
+        <MovieCommentsList
         v-for="(comment, index) of commentlist"
         :key="index"
         :comment="comment"
@@ -52,7 +59,7 @@ import axios from 'axios'
 
 const API_URL = 'http://127.0.0.1:8000'
 
-import MyCommentsList from '@/views/MyCommentsList'
+import MovieCommentsList from '@/views/Movies/MovieCommentsList'
 
 export default {
   
@@ -64,13 +71,16 @@ export default {
       content: null,
       commentlist: null,
       // username: this.$store.state.username 
+      MymovieRate: 0,
+      Star: 0,
     }
   },
   created() {
     this.getMovieDetail()
     this.getCommentDetail()
+    // this.getStar()
   },
-  components: { MyCommentsList, },
+  components: { MovieCommentsList, },
   methods: {
     getMovieDetail() {
       axios({
@@ -87,8 +97,6 @@ export default {
     },
     createComment() {
       const content = this.content
-      // const movie = this.$route.params.id
-      // const id = 
       axios({
         method: 'post',
         url: `${API_URL}/movies/${this.$route.params.id}/comment_create/`,
@@ -99,30 +107,94 @@ export default {
       })
       .then((res) => {
         console.log(res)
-        // this.commentlist.push(comment) 
-        this.$router.go(this.$router.DetailView)
-        // this.$router.push({ name: 'DetailView' })
-        // if(this.$route.path!==`/${this.$route.params.id}`)
-        // this.$router.push(`/${this.$route.params.id}`)
-        // this.comment = null
+        this.getCommentDetail()
+        // this.$router.go(this.$router.MyCommentsList)
+        // this.$router.push({ name: 'MyCommentsList' })
+        this.content = null
       })
       .catch((err => {
         console.log(err)
       }))
     },
     getCommentDetail() {
-      // const id = $route.params.id
       axios({
         method: 'get',
-        url: `${API_URL}/movies/commentlist/`
+        url: `${API_URL}/movies/movie_comment/${this.$route.params.id}/`,
+        headers: {
+          Authorization: `Token ${this.$store.state.token}`
+        }
       })
       .then((res) => { 
         console.log(res)
-        // if ( id === movie_id )
         this.commentlist = res.data
       })
       .catch((err) => { console.log (err) })
     },
+    starRate() {
+      const rank = this.MymovieRate
+      const movie = this.movie.id
+      axios({
+        method: 'post',
+        url: `${API_URL}/movies/${this.$route.params.id}/star_test/`,
+        data: { rank, movie },
+        headers: {
+          Authorization: `Token ${this.$store.state.token}`
+        }
+      })
+      .then((res) => {
+        console.log(res)
+        this.Star = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    },
+    getStar() {
+      axios({
+        method: 'get',
+        url: `${API_URL}/movies/${this.$route.params.id}/star_test/`,
+        headers: {
+          Authorization: `Token ${this.$store.state.token}`
+        }
+      })
+      .then((res) => { 
+        console.log(res.data)
+        this.Star = this.movie.vote_average
+      })
+      .catch((err) => { console.log (err) })
+    },
+    likes() {
+      console.log(this.movie)
+      if (this.$store.state.token != '') {
+          axios({
+            method: 'post',
+            url: `${API_URL}/movies/${this.movie.id}/${this.$store.state.userid}/likes/`,
+          })
+            .then(res => {
+              console.log(1112)
+              console.log(res)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+          }
+    }
+    // deletecomment() {
+    //   axios({
+    //     method: 'delete',
+    //     url:`${API_URL}/movies/${this.$route.params.id}/${this.comment.id}/`,
+    //     headers: {
+    //       Authorization: `Token ${this.$store.state.token}`
+    //     },
+    //   })
+    //   .then(() => {
+    //     // this.$router.go(this.$router.DetailView)
+    //     this.getCommentDetail()
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    // },
   },
 }
 </script>

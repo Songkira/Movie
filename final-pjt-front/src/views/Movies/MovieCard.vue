@@ -10,14 +10,13 @@
         </div>
       </div>
     </router-link>
-    <button @click="likes" type="button" class="btn btn-light">LIKE</button>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 
-const API_URL = 'http://127.0.0.1:8000'
+// const API_URL = 'http://127.0.0.1:8000'
 export default {
   name: 'MovieCard',
   props: {
@@ -37,22 +36,7 @@ export default {
         card_index.style.color = 'pink'
       }
     },
-    likes() {
-      console.log(this.movie)
-      if (this.$store.state.token != '') {
-          axios({
-            method: 'post',
-            url: `${API_URL}/movies/${this.movie.id}/${this.$store.state.userid}/likes/`,
-          })
-            .then(res => {
-              console.log(1112)
-              console.log(res)
-            })
-            .catch(err => {
-              console.log(err)
-            })
-          }
-    }
+    
   },
 }
 </script>

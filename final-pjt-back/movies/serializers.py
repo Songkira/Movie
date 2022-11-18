@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Genre, Actor, Director, Movie, Comment
+from .models import Genre, Actor, Director, Movie, Comment, Star
 
 class MovieSerializer(serializers.ModelSerializer):
 
@@ -26,8 +26,27 @@ class DirectorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return obj.user.username
 
     class Meta:
         model = Comment
-        # fields = ( 'id','content','user','username', 'movie')
-        fields = ('content',)
+        fields = ( 'id','content','user','username', 'movie',)
+        # fields = ('content',)
+        read_only_fields = ( 'user', 'movie')
+
+class StarSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return obj.user.username
+
+    class Meta:
+        model = Star
+        fields = ( 'id','user','username', 'movie', 'rank', )
+        # fields = ('content',)
+        read_only_fields = ( 'user', )
+
+

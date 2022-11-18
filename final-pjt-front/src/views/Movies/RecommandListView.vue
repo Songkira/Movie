@@ -1,12 +1,13 @@
 <template>
   <div>
-
+    
   </div>
 </template>
 
 <script>
 export default {
-    name: 'MyMoviesList',
+  name: 'RecommandListView',
+
 }
 </script>
 

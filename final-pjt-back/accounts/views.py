@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_list_or_404, get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import UserSerializer
 
@@ -15,6 +16,7 @@ def signup(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def follow(request, my_pk, person_pk):
     me = get_object_or_404(get_user_model(), pk=my_pk)
     person = get_object_or_404(get_user_model(), pk=person_pk)
@@ -37,11 +39,10 @@ def usersinfo(request):
     return Response(users, status=status.HTTP_200_OK)
     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['POST'])
-# def follow_count(request, person_pk):
-#     person = get_object_or_404(get_user_model(), pk=person_pk)
-#     followings = person.followings.filter()
-#     followers = person.followers.filter()
-#     print(11111)
-#     print(person)
-#     print(followings, followers)
+@api_view(['GET'])
+def followinfo(request, person_pk):
+    person = get_object_or_404(get_user_model(), pk=person_pk)
+    followings = person.followings.values()
+    followers = person.followers.values()
+    data = { 'followers':followers, 'followings':followings }
+    return Response(data)

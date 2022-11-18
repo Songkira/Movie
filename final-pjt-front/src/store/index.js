@@ -21,6 +21,7 @@ export default new Vuex.Store({
     userid: -1,
     username: '익명',
     token: '',
+    reviewRate: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
   getters: {
     randomMovie(state) { return _.sample(state.movies)},
@@ -64,27 +65,12 @@ export default new Vuex.Store({
     SAVE_TOKEN(state, data) {
       state.token = data[0]
       state.username = data[1]
-      if (state.token != '') {
-        axios({
-          method: 'get',
-          url: `${API_URL}/accounts/user/`,
-          headers: {
-            "Authorization": `Token ${data[0]}`
-          }
-        })
-          .then(res => {
-            console.log(res.data)
-            state.userid = res.data.pk
-            console.log(state.userid)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-        }
+      state.userid = data[2]
       router.push({ name: 'MovieView'})
     },
     DELETE_TOKEN(state) {
       state.token = ''
+      state.userid = -1
       state.username = '익명'
       // router.push({ name: 'MovieView'})
     }
@@ -145,13 +131,28 @@ export default new Vuex.Store({
         }
       })
         .then(res => {
-          context.commit('SAVE_TOKEN', [res.data.key, payload.username])
+          const token = res.data.key
+          axios({
+            method: 'get',
+            url: `${API_URL}/accounts/user/`,
+            headers: {
+              "Authorization": `Token ${token}`
+            }
+          })
+            .then(res => {
+              context.commit('SAVE_TOKEN', [token, payload.username, res.data.pk])
+            })
+            .catch(err => {
+              console.log(err)
+            })
+          
         })
         .catch((err) => {
           console.log(err)
         })
     },
     logOut(context) {
+      router.push({ name: 'MovieView' })
       axios({
         method: 'post',
         url: `${API_URL}/accounts/logout/`,

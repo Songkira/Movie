@@ -15,7 +15,7 @@
 
 
 <script>
-import WatchListItem from '@/views/WatchListItem.vue'
+import WatchListItem from '@/views/Movies/WatchListItem.vue'
 
 export default {
   name: 'WatchListView',
