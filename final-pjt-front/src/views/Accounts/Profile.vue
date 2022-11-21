@@ -1,6 +1,6 @@
 <template>
   <div id="myprofile">
-    <div id="myinfo" style="margin:5%;">
+    <div id="myinfo" class="col-12" style="margin-left:5%;">
       <div style="display: flex;">
         <img id="personimg" :src="require(`@/assets/user.jpg`)" style="width:40%;">
         <div>
@@ -15,20 +15,6 @@
         </div>
         <button type="button" class="btn btn-light" @click="followThis">Follow</button>
       </div>
-    </div>
-    <br>
-    <br>
-    <div id="mysettings" style="margin:5%;">
-        <h3>개인 설정</h3>
-        <br>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-            <label class="form-check-label" for="flexSwitchCheckDefault">공포 장르 제외</label>
-        </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-            <label class="form-check-label" for="flexSwitchCheckDefault">19+ 제외</label>
-        </div>
     </div>
   </div>
 </template>
@@ -155,7 +141,17 @@ export default {
     margin: 5%;
 }
 
+#myinfo {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 5%;
+}
 
+#mysettings {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 5%;
+}
 
 #personimg {
   border-radius: 70%;

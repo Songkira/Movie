@@ -39,10 +39,31 @@ def usersinfo(request):
     return Response(users, status=status.HTTP_200_OK)
     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT',])
+@permission_classes([IsAuthenticated])
+def myinfo(request, my_pk):
+    User = get_user_model()
+    if request.method == 'GET':
+        user = User.objects.values().filter(pk=my_pk)
+        return Response(user, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        user = get_object_or_404(User, pk=my_pk)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 def followinfo(request, person_pk):
     person = get_object_or_404(get_user_model(), pk=person_pk)
     followings = person.followings.values()
     followers = person.followers.values()
     data = { 'followers':followers, 'followings':followings }
-    return Response(data)
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def userlikelist(request, person_pk):
+    person = get_object_or_404(get_user_model(), pk=person_pk)
+    likemovies = person.like_movies.values()
+    return Response(likemovies, status=status.HTTP_200_OK)

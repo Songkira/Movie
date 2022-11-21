@@ -1,8 +1,20 @@
 <template>
-  <div style="display: flex; justify-content: center;">
-    <span><a @click="mypageGo">{{ comment.username }} -</a></span> 
-    <span><h5>{{ comment.content }}</h5></span>
-    <button @click="deleteComment">x</button>
+  <div>
+    <div class="card" style="height: auto;">
+      <div class="card-body" style="display: flex; width:100%; height:auto; background-color: #2c3e50;">
+        <span class="row-12 col-2" style="background-color: #161e27; border-radius: 4px;">
+          <img id="personimg" :src="require(`@/assets/user.jpg`)" style="width:60%; margin: 10%;">
+          <br>
+          <h5 @click="mypageGo"><b>{{ comment.username }}</b></h5>
+        </span>
+        <span class="col-8" style="margin: 5%;">
+          <h6>{{ comment.content }}</h6>
+        </span>
+        <span class="col-1">
+          <i @click="deleteComment" class="fa-solid fa-xmark"></i>
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,7 +41,7 @@ export default {
       .then((res) => {
         console.log(res)
         // this.$router.push({ name: 'DetailView' })
-        this.$router.go(this.$router.MyCommentsList)
+        this.$router.go(this.$router.MovieCommentsList)
       })
       .catch((err) => {
         console.log(err)
@@ -43,5 +55,7 @@ export default {
 </script>
 
 <style>
-
+#personimg {
+  border-radius: 70%;
+}
 </style>

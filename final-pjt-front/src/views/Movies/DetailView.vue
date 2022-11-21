@@ -1,23 +1,44 @@
 <template>
   <div id="detail" >
-    <div class="left">
-      <div>
+    <!-- 영화 디테일 -->
+    <div class="col-3 left">
+      <div style="position: relative;">
         <img :src="image_url" class="card-img-top" alt="movie_image">
+        <i style="position: absolute; left: -0.5%; margin: 2%;" @click="likes" class="fa-solid fa-heart fa-2x"></i>
       </div>
+      <br>
       <div>
         <h4>{{ movie?.title }}</h4>
-        <p>국가: {{ movie?.production_countries_name }}</p>
+        <small>{{ movie?.production_countries_name }}</small>
         <h6>{{ movie?.director.name }}</h6>
       </div>
-      <span v-for="(genre, idx) in movie.genres" :key="idx">
-        <span class="badge text-bg-light" style="margin: 3%;">{{ genre.name }}</span>
+      <span v-for="genre in movie?.genres" :key="genre.id">
+        <span class="badge text-bg-light" style="margin: 2%;">{{ genre.name }}</span>
       </span>
+      <br>
+      <br>
       <div>
-        <p>{{ movie?.overview }}</p>
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button collapsed" style="background-color: #2c3e50; color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <b>줄거리</b>
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse bg-dark" style="color: white;" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p><small>{{ movie?.overview }}</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="right">
-      <div id="star-graph" style="padding: 5px 0px 5px; height: 25%; background-color: antiquewhite;">
+    <div class="col-1"></div>
+    <!-- 별점, 찜, 댓글 -->
+    <div class="col-8 right">
+      <div id="star-graph" style="padding: 5px 0px 5px; height: 25%;">
+        <h1>그래프 자리</h1>
         <span class="box" style="background-color:azure">
 
         </span>
@@ -25,28 +46,32 @@
           
         </span>
       </div>
-      <div id="star-jjim" style="padding: 5px 0px 5px; margin: 1%;height: 15%; background-color: antiquewhite;">
-        <span>
-          <select name="rate" v-model="MymovieRate" id="rate">
+      <div id="star-jjim" style="margin: 1%;height: 15%;">
+        <span class="col-5">
+          <i class="fa-solid fa-star fa-2x" style="color: gold; margin:5%;"></i>
+          <h5><b>{{ this.Star === 0 ? movie?.vote_average: this.Star }}</b></h5>
+        </span>
+        <span class="col-7" style="display: flex; justify-content: center; align-items: center;">
+          <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="rate" v-model="MymovieRate" id="rate" style="height: 50%;">
             <option class="content-font" style="color:black;" :value="rate" v-for="(rate, idx) in this.$store.state.reviewRate" :key="idx">{{ rate }}</option>
           </select>
-          <input type="submit" value="별점 평가하기" @click="starRate">
-          {{ this.Star === 0 ? this.movie.vote_average: this.Star }}
-        </span>
-        |
-        <span>
-          <button @click="likes" type="button" class="btn btn-light">LIKE</button>  
+          <button @click="starRate" type="button" class="btn btn-light" style="margin-left: 3%; height: 50%;">영화 평가하기</button>
+          <br>
         </span>
       </div>
-      <div id="comment-input" style="padding: 5px 0px 5px; margin: 1%; height: 15%; background-color: antiquewhite;">
-        <span>감상평 입력</span>
-        <input type="text" v-model.trim="content">
-        <button @click="createComment">제출</button>
+      <br>
+      <hr>
+      <br>
+      <h3>감상평</h3>
+      <br>
+      <div id="comment-input" style="display: flex; align-items:center; margin: 1%; height: 15%;">
+        <input class="form-control" style="width: 90%" type="text" placeholder="감상평을 공유해보세요!" aria-label="default input example" v-model.trim="content">
+        <button @click="createComment" type="button" class="btn btn-light">입력</button>
       </div>
-      <div id="comment-box" style="height: 45%; margin: 1%;background-color: antiquewhite;">
+      <div id="comment-box" style="height: 45%; margin: 1%;">
         <MovieCommentsList
-        v-for="(comment, index) of commentlist"
-        :key="index"
+        v-for="comment of commentlist"
+        :key="comment.pk"
         :comment="comment"
         />
       </div>
@@ -70,7 +95,6 @@ export default {
       image_url: null,
       content: null,
       commentlist: null,
-      // username: this.$store.state.username 
       MymovieRate: 0,
       Star: 0,
     }
@@ -78,7 +102,6 @@ export default {
   created() {
     this.getMovieDetail()
     this.getCommentDetail()
-    // this.getStar()
   },
   components: { MovieCommentsList, },
   methods: {
@@ -87,11 +110,9 @@ export default {
         method: 'get',
         url: `${API_URL}/movies/${this.$route.params.id}/`
       })
-      .then((res) => { 
-        // console.log (res)
+      .then((res) => {
         this.movie = res.data 
         this.image_url = `https://www.themoviedb.org/t/p/w600_and_h900_bestv2/${ res.data.poster_path }`
-        // this.movie.commentlist = res.data.comment_set
       })
       .catch((err) => { console.log (err) })
     },
@@ -108,8 +129,6 @@ export default {
       .then((res) => {
         console.log(res)
         this.getCommentDetail()
-        // this.$router.go(this.$router.MyCommentsList)
-        // this.$router.push({ name: 'MyCommentsList' })
         this.content = null
       })
       .catch((err => {
@@ -171,60 +190,38 @@ export default {
             url: `${API_URL}/movies/${this.movie.id}/${this.$store.state.userid}/likes/`,
           })
             .then(res => {
-              console.log(1112)
               console.log(res)
             })
             .catch(err => {
               console.log(err)
             })
           }
-    }
-    // deletecomment() {
-    //   axios({
-    //     method: 'delete',
-    //     url:`${API_URL}/movies/${this.$route.params.id}/${this.comment.id}/`,
-    //     headers: {
-    //       Authorization: `Token ${this.$store.state.token}`
-    //     },
-    //   })
-    //   .then(() => {
-    //     // this.$router.go(this.$router.DetailView)
-    //     this.getCommentDetail()
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //   })
-    // },
+    },
   },
 }
 </script>
 
 <style>
-/* div {
-  margin: 1%
-} */
 #detail {
-  padding:5% 5% 5% 5%; 
-  /* color: white; */
+  padding:5% 5% 5% 5%;
   height: 100vh;
 }
 .left {
   padding: 10px;
   float: left;
-  /* background-color: pink; */
   width: 30%;
 }
 .right {
   padding: 10px;
   float: right;
-  /* background-color: skyblue; */
   width: 70%;
 }
-/* .right > div {
-  
-} */
 #star-jjim {
   display : flex; 
   justify-content : space-around;
+}
+
+#rate {
+  width: 70px;
 }
 </style>

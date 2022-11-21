@@ -29,6 +29,31 @@ def movie_detail(request, movie_pk):
         data['genres'] = genres
         return Response(data)
 
+@api_view(['GET'])
+def genres_list(request):
+    if request.method == 'GET':
+        genres = get_list_or_404(Genre)
+        genre_list = []
+        # print(genres)
+        serializer = GenreSerializer(genres, many=True)
+        for i in range(len(genres)):
+            genre_list.append(serializer.data[i].values())
+        # print(genre_list)
+        return Response(genre_list)
+
+@api_view(['GET'])
+def state_list(request):
+    if request.method == 'GET':
+        movies = get_list_or_404(Movie)
+        state_list = []
+        # print(genres)
+        serializer = MovieSerializer(movies, many=True)
+        for i in range(len(movies)):
+            state_list.append(serializer.data[i]['production_countries_name'])
+            # print(serializer.data[i]['production_countries'])
+        # print(state_list)
+        return Response(state_list)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comment_create(request, movie_pk):
@@ -68,6 +93,7 @@ def star_test(request, movie_pk):
             return Response(movie.vote_average)
 
 @api_view(['PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def comment_detail(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
     if request.method == 'PUT':
@@ -81,7 +107,7 @@ def comment_detail(request, comment_pk):
         return Response(result)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def comment_list(request, movie_pk):
     if request.method == 'GET':
         movie = get_object_or_404(Movie, pk=movie_pk)
@@ -94,15 +120,16 @@ def comment_list(request, movie_pk):
 def comment_delete(request, movie_pk, comment_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     comment = movie.comment_set.get(pk=comment_pk)
-    if not request.user.comments.filter(pk=comment_pk).exits():
+    if not request.user.comments.filter(pk=comment_pk).exist():
         return Response({'message': '권한이 없습니다.'})
     else:
         comment.delete()
-        result = { '댓글 삭제'}
+        result = {'댓글 삭제'}
         return Response(result)
     
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def likes(request, movie_pk, user_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     user = get_object_or_404(get_user_model(), pk=user_pk)
@@ -112,11 +139,11 @@ def likes(request, movie_pk, user_pk):
     elif request.method == 'POST':
         if movie.like_users.filter(pk=user_pk).exists():
             movie.like_users.remove(user)
-            # following = False
+            islike = False
         else:
             movie.like_users.add(user)
-            # following = True
-        return Response(status=status.HTTP_200_OK)
+            islike = True
+        return Response(islike, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)
             # return Response(serializer.data)
 

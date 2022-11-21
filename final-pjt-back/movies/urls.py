@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.movies_list),
+    path('genres/', views.genres_list),
+    path('states/', views.state_list),
     path('<int:movie_pk>/', views.movie_detail),
     path('<int:movie_pk>/comment_create/', views.comment_create),
     path('<int:movie_pk>/star_test/', views.star_test),

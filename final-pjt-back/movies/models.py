@@ -24,6 +24,7 @@ class Movie(models.Model):
     tagline = models.CharField(max_length=200)
     production_countries = models.CharField(max_length=100)
     production_countries_name = models.CharField(max_length=100)
+    adult = models.BooleanField(default=True)
     genres = models.ManyToManyField(Genre)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_movies')
     actors = models.ManyToManyField(Actor)

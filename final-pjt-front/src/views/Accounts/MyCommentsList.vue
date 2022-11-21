@@ -1,19 +1,16 @@
 <template>
-    <div class="card" style="width: 540px; height: auto;" @click="detailGo">
-        <div class="row g-0">
-            <div class="col">
-                <img :src="image_url" class="img-fluid rounded-start" alt="..." style="height: 210px;">
-            </div>
-            <div class="col-md-9">
-                <div class="card-body" style="height: 210px; display: flex column; justify-content:center;">
-                    <h5 class="card-title">{{ movieinfo.title }}</h5>
-                    <br>
-                    <div>
-                        <h6 class="card-title" style="margin: 5%;">{{ comment.content }}</h6>
-                    </div>
+    <div style="display: flex; justify-content: center; margin:2%;" @click="detailGo">
+        <span class="col-3 col-xl-2 row">
+            <img :src="image_url" id="mycommentimage" alt="...">
+        </span>
+        <span class="col-9 col-xl-10" style="display: flex column; justify-content: center; background-color: #161e27; border-radius: 4px;">
+            <div style="margin-top: 3%;">
+                <h5><b>{{ movieinfo.title }}</b></h5>
+                <div>
+                    <p style="margin: 5%; margin-bottom: 0%;">{{ comment.content }}</p>
                 </div>
             </div>
-        </div>
+        </span>
     </div>
 </template>
 
@@ -49,5 +46,8 @@ export default {
 </script>
 
 <style>
-
+#mycommentimage {
+    object-fit: fill;
+    border-radius: 5px;
+}
 </style>

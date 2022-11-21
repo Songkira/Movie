@@ -1,0 +1,13 @@
+accounts_user(id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, sex, nothrill, nofear, birth)
+  accounts_user_followings
+ 
+movies_movie
+  movies_movie_actors
+  movies_movie_director
+  movies_movie_genres
+  movies_movie_like_users
+movies_actors
+movies_comment
+movies_director
+movies_genre
+movies_star

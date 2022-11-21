@@ -110,6 +110,22 @@ def get_tagline(movie_dict):
         return tagline
     return 'nothing'
 
+def get_adult(movie_dict):    
+    movie_id = movie_dict.get('id')
+    response = requests.get(
+        f'https://api.themoviedb.org/3/movie/{movie_id}',
+        params={
+            'api_key': API_KEY,
+            'language': 'ko-kr',
+        }
+    ).json()
+    adult = response.get('adult')
+    print(adult)
+    try:
+        return adult
+    except:
+        return True
+
 def get_production_countries(movie_dict):    
     movie_id = movie_dict.get('id')
     response = requests.get(
@@ -123,8 +139,6 @@ def get_production_countries(movie_dict):
     if len(production_countries) == 0: return ("", "")
     iso = production_countries[0].get('iso_3166_1')
     name = production_countries[0].get('name')
-    print(iso)
-    print(name)
     if iso or name:
         return (iso, name)
     return ("", "")
@@ -140,13 +154,14 @@ def movie_data(page=1):     # 2. Movie popular 데이터를 불러와서 movie D
     ).json()
 
     for movie_dict in response.get('results'):
-        if not movie_dict.get('release_date'): continue   # 없는 필드 skip
+        if not movie_dict.get('release_date'): continue
+        elif movie_dict.get('overview') == "": continue   # 없는 필드 skip
         # 유투브 key 조회
         youtube_key = get_youtube_key(movie_dict)       # 3. 유튜브 키 따로 가져오기
         runtime_value = get_runtime_value(movie_dict)   # 3. 런타임 정보 따로 불러오기
         tagline = get_tagline(movie_dict)               # 3. 태그라인 정보 따로 불러오기
         production_countries = get_production_countries(movie_dict)     # 3. 제조국 정보 따로 불러오기
-
+        adult = get_adult(movie_dict)
         movie = Movie.objects.create(       # 4. movie 정보 만들기
             id=movie_dict.get('id'),
             title=movie_dict.get('title'),
@@ -161,6 +176,7 @@ def movie_data(page=1):     # 2. Movie popular 데이터를 불러와서 movie D
             tagline=tagline,
             production_countries=production_countries[0],
             production_countries_name=production_countries[1],
+            adult = adult,
         )
         for genre_id in movie_dict.get('genre_ids', []):
             movie.genres.add(genre_id)
@@ -177,6 +193,6 @@ def tmdb_data(request):     # 1. DB 처음 불러올 때
     Director.objects.all().delete()
 
     tmdb_genres()
-    for i in range(1, 6):
+    for i in range(1, 11):
         movie_data(i)
     return HttpResponse('OK >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')

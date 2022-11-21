@@ -1,12 +1,12 @@
 <template>
-  <div class='first'>
+  <div class='first col-3'>
     <router-link :to="{ name: 'DetailView', params: { id: movie.id }}">
-      <div class="card" style="border-color: #161e27; color: white; width: 18rem; display: inline-block; margin: 3%;" @mouseenter="selectCard" @mouseleave="selectCard">
+      <div class="card" style="background-color: #161e27; width:100%; color: white; display: inline-block; margin: 3%;" @mouseenter="selectCard" @mouseleave="selectCard">
         <img :src="image_url" class="card-img-top" alt="movie_image">
-        <div class="card-body">
-          <h5><b>{{ movie.title }}</b></h5>
+        <div class="card-body" style="border: 1px solid #161e27;">
+          <h5 class="card-title"><b>{{ movie.title }}</b></h5>
           <br>
-          <p class="card-text" style="text-align: justify; overflow: hidden; text-overflow: ellipsis;">{{ movie.overview }}</p>
+          <p class="card-text" style="text-align: justify; width:100%; overflow: hidden; text-overflow: ellipsis;">{{ movie.overview }}</p>
         </div>
       </div>
     </router-link>
@@ -43,19 +43,28 @@ export default {
 
 <style>
  .first{
-  margin: 1%;
+  margin: 2%;
  }
  .card-text{
   overflow: hidden; 
   text-overflow: ellipsis;
   white-space: normal;
   display: -webkit-box;
-  -webkit-line-clamp: 7; 
+  -webkit-line-clamp: 5; 
   -webkit-box-orient: vertical;
   width: 250px;
  }
+ .card-title {
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; 
+  -webkit-box-orient: vertical;
+ }
  .card-body{
-  height: 250px;
-  background-color: #161e27;
+  width: 100%;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.1);
  }
 </style>

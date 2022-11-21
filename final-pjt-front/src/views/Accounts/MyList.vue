@@ -4,12 +4,13 @@
     <div id="likemovie">
       <MyMoviesList
       v-for="(movie, idx) in likeMovies"
-      :key="idx"
-      :movie="movie"/>
+      :key="movie.id"
+      :movie="movie"
+      @nolike="nolike(idx)"/>
     </div>
     <br>
-    <div style="display: flex column; align-items: center;">
       <h1>나의 평가</h1>
+    <div id="mycomments">
       <MyCommentsList
       v-for="(comment, idx) in myComments"
       :key="idx"
@@ -75,6 +76,7 @@ export default {
           })
             .then(res => {
               this.likeMovies = res.data
+              console.log('****')
               console.log(this.likeMovies)
             })
             .catch(err => {
@@ -97,6 +99,9 @@ export default {
                     console.log(err)
                 })
         },
+        nolike() {
+          this.getLikeMovies()
+        }
 
     }
 }
@@ -105,7 +110,18 @@ export default {
 <style>
 #likemovie {
   display: flex;
-  overflow: scroll hidden;
-  white-space: nowrap;
+  justify-content: space-evenly;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 5%;
+  flex-wrap: wrap;
+}
+
+#mycomments {
+  display: flex column;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 5%;
 }
 </style>

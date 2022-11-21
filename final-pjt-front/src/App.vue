@@ -1,64 +1,140 @@
 <template>
   <div id="app">
-    <nav class="nav justify-content-end">
-      <h4 style="color: white;">안녕하세요. {{ this.$store.state.username }} 님.</h4>
-      <router-link :to="{ name: 'MovieView' }">Movie</router-link>&nbsp;&nbsp;
-      <router-link :to="{ name: 'RandomView' }">Random</router-link>&nbsp;&nbsp;
-      <router-link :to="{ name: 'WatchListView' }">WatchList</router-link>&nbsp;&nbsp;
-      <router-link :to="{ name: 'MyPage', params: { personname: this.$store.state.username } }">MyPage</router-link>&nbsp;&nbsp;
-      <router-link :to="{ name: 'SignUp' }">SignUp</router-link>&nbsp;&nbsp;
-      <router-link :to="{ name: 'Login' }">Login</router-link>&nbsp;&nbsp;
-      <a @click="logOut">Logout</a>&nbsp;&nbsp;
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <div class="container-fluid">
+        <router-link class="navbar-brand" :to="{ name: 'MovieView' }"><b>웹 이름</b></router-link>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" style="justify-content: right;" id="navbarNavDropdown" >
+          <ul class="navbar-nav">
+            <li v-if="this.$store.getters.isLogin === true" class="nav-item" style="margin:auto;">
+              <router-link class="nav-link" :to="{ name: 'MovieView' }"><b>Movies</b></router-link>
+            </li>
+            <li v-if="this.$store.getters.isLogin === true" class="nav-item" style="margin:auto;">
+              <router-link class="nav-link" :to="{ name: 'RandomView' }"><b>Random</b></router-link>
+            </li>
+            <li v-if="this.$store.getters.isLogin === false" class="nav-item" style="margin:auto;">
+              <router-link class="nav-link" :to="{ name: 'SignUp' }"><b>SignUp</b></router-link>
+            </li>
+            <li v-if="this.$store.getters.isLogin === false" class="nav-item" style="margin:auto;">
+              <router-link class="nav-link" :to="{ name: 'Login' }"><b>Login</b></router-link>
+            </li>
+            <li v-if="this.$store.getters.isLogin === true" class="nav-item" style="margin:auto;">
+              <router-link class="nav-link" :to="{ name: 'Login' }"><b>Logout</b></router-link>
+            </li>
+            <li v-if="this.$store.getters.isLogin === true" class="nav-item dropdown" style="width:150px; margin: auto;">
+              <a class="nav-link dropdown-toggle" role="button" href="" data-bs-toggle="dropdown" aria-expanded="false">
+                <img id="personimg" :src="require(`@/assets/user.jpg`)" style="width:25%; margin-right: 3%;">
+                <b>ID: {{ this.$store.state.username }}</b>
+              </a>
+              <ul class="dropdown-menu bg-dark">
+                <li>
+                  <router-link class="dropdown-item" style="color: white;" :to="{ name: 'MyPage', params: { personname: this.$store.state.username } }">MyPage</router-link>
+                </li>
+                <li>
+                  <router-link class="dropdown-item" style="color: white;" :to="{ name: 'MySettings' }">My settings</router-link>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <i class="fa-solid fa-magnifying-glass fa-2x" style="margin: 1%;" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
+        </div>
+      </div>
     </nav>
-    <router-view/>
+    <router-view
+    :key="$route.fullPath"/>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="close"></button>
+          </div>
+          <div class="modal-body" @submit.prevent="searchMovie">
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model.trim="searchword" @keyup="wordchange">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <div style="display: flex; flex-wrap: wrap;">
+              <SearchResults
+              v-for="movie in results"
+              :key="movie.id"
+              :movie="movie"
+              data-bs-dismiss="modal" aria-label="Close"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// import axios from 'axios'
-// const API_URL = 'http://127.0.0.1:8000'
-// const personname = 'test1'
+import SearchResults from '@/views/Movies/SearchResults.vue'
 export default {
   name: 'App',
+  components: {
+    SearchResults
+  },
+  data() {
+    return {
+      isLogin: this.$store.getters.isLogin,
+      searchword: '',
+      results: [],
+    }
+  },
   created() {
     this.movieGet()
+  },
+  watch: {
+    searchword(word) {
+      console.log(word)
+    }
   },
   methods: {
     movieGet() {
       this.$store.dispatch('movieGet')
     },
-    logOut() {
-      this.$store.dispatch('logOut')
+    wordchange(event) {
+      this.searchword = event.target.value
+      console.log(this.searchword, typeof(this.searchword))
+      this.searchMovie()
+    },
+    close() {
+      this.searchword = ''
+      this.results = []
+    },
+    searchMovie() {
+      if (this.searchword.length !== 0) {
+        const word = this.searchword
+        const base = this.$store.state.movies
+        const rst = []
+        for (let i=0; i<base.length; i++) {
+          if (base[i].title.includes(word)) {
+            rst.push(base[i])
+          } else if (base[i].overview.includes(word)) {
+            rst.push(base[i])
+          }
+        }
+        this.results = rst
+      } else {
+        this.results = []
+      }
     }
   }
 }
 </script>
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: white;
-  background-color: #2c3e50;
-  height: 100vh;
+  background-size:cover;
 }
 
-nav {
-  padding: 30px;
-  background-color: #1f242a;
-}
-
-nav a {
-  font-weight: bold;
-  color: white;
-  word-spacing: 20px;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-nav router-link {
-  padding: 0px 20px;
-}
 </style>

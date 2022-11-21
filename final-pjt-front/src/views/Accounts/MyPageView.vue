@@ -1,13 +1,18 @@
 <template>
   <div style="display: flex; justify-content: center;">
-    <span class="col-4" style="width: 300px;">
+    <span class="col-4" style="width: 300px; margin-top: 4%;">
+        <br>
+        <br>
         <Profile/>
     </span>
     <span style="width: 100px;">
     </span>
     <span class="col-8">
+        <br>
+        <br>
         <MyList/>
     </span>
+    <p></p>
   </div>
 </template>
 
