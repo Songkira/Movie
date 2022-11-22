@@ -34,6 +34,13 @@ class Comment(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     content = models.CharField(max_length=200)
+
+class Review(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
+    title = models.CharField(max_length=100)
+    content = models.CharField(max_length=300)
+    watch_date = models.DateField()
     
 class Star(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)

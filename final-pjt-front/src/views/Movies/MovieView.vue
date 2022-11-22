@@ -3,9 +3,9 @@
     <div v-if="LikesList[0].length" id="likeslist" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
-        <h4>내 팔로워 {{ usernames[0] }}님이 좋아해요</h4>
+        <h4>내 친구 <b @click="personPageGo">{{ usernames[0] }}</b>님이 좋아해요</h4>
       </div>
-      <div style="display: flex; justify-content: space-evenly;">
+      <div style="display: flex; justify-content: center;">
       <FollowerLikesList
       v-for="likemovie in LikesList[0]"
       :key="likemovie.id"
@@ -15,7 +15,7 @@
     <div v-if="LikesList[1].length" id="likeslist" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
-        <h4>내 팔로워 {{ usernames[1] }}님이 좋아해요</h4>
+        <h4>내 친구 {{ usernames[1] }}님이 좋아해요</h4>
       </div>
       <div style="display: flex; justify-content: space-evenly;">
       <FollowerLikesList
@@ -27,7 +27,7 @@
     <div v-if="LikesList[2].length" id="likeslist" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
-        <h4>내 팔로워 {{ usernames[2] }}님이 좋아해요</h4>
+        <h4>내 친구 {{ usernames[2] }}님이 좋아해요</h4>
       </div>
       <div style="display: flex; justify-content: space-evenly;">
       <FollowerLikesList
@@ -37,10 +37,18 @@
       </div>
     </div>
     <br>
-    <h3>최신 영화</h3>
-    <div id="MovieView">
-      <MovieCard v-for="(movie) in movies" :key="movie.id" :movie="movie"
-      />
+    <div style="position: absolute;">
+      <div style="position: absolute; display: flex; margin-left: 80%;">
+        <select  class="form-select" aria-label="Default select example" name="sort" v-model="selectSort" id="sort" style="height:1%;">
+          <option class="content-font" style="color:black;" :value="sort" v-for="(sort, idx) in this.sortList" :key="idx">{{ sort }}</option>
+        </select>
+        <button type="button" class="btn btn-light" @click="SortBy">Go</button>
+      </div>
+      <h3>최신 영화</h3>
+      <div id="MovieView">
+        <MovieCard v-for="(movie) in movieslist" :key="movie.id" :movie="movie"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -58,12 +66,15 @@ export default {
     FollowerLikesList,
   },
   computed: {
-    movies() { return this.$store.state.movies }
+    // movies() { return this.$store.state.movies }
   },
   data() {
     return {
         LikesList: [[],[],[]],
         usernames: [],
+        selectSort: null,
+        sortList: ['전체', '인기도순', '평점순', '러닝타임순'],
+        movieslist: this.$store.state.movies,
     }
   },
   created() {
@@ -127,10 +138,64 @@ export default {
             console.log(err)
             })
         }
+    },
+    SortBy() {
+      if (this.selectSort === '전체') {
+        this.movieslist = this.$store.state.movies
+        this.movieslist = this.movieslist.slice(0, 20)
+        console.log(this.movieslist)
+      }
+      if (this.selectSort === '인기도순') {
+        this.movieslist = this.$store.state.movies
+        this.Popularity()
+        // this.movies.slice(20)
+        console.log(this.movieslist)
+      }
+      if (this.selectSort === '평점순') {
+        this.movieslist = this.$store.state.movies
+        this.Vote()
+        // this.movies.slice(20)
+        console.log(this.movieslist)
+      }
+      if (this.selectSort === '러닝타임순') {
+        this.movieslist = this.$store.state.movies
+        this.Runtime()
+        // this.movies.slice(20)
+        console.log(this.movieslist)
+      }
+    },
+    Popularity() {
+      this.movieslist.sort(function(a, b) {
+        return b.popularity - a.popularity
+      })
+      this.movieslist = this.movieslist.slice(0, 20)
+    },
+    Vote() {
+      this.movieslist.sort(function(a, b) {
+        return b.vote_average - a.vote_average        
+      })
+      this.movieslist = this.movieslist.slice(0, 20)
+    },
+    Runtime() {
+      const movieslistruntime = []
+      for (let i=0; i<this.movieslist.length; i++) {
+        if (this.movieslist[i].runtime !== 0) {
+          movieslistruntime.push(this.movieslist[i])
+        }
+      }
+      this.movieslist = movieslistruntime
+      this.movieslist.sort(function(a, b) {
+        return a.runtime - b.runtime
+      })
+      this.movieslist = this.movieslist.slice(0, 20)
+    },
+    personPageGo(event) {
+      this.$router.push({ name:"MyPage", params: { personname: event.target.innerText } })
     }
   }
 }
 </script>
+
 
 <style>
 #MovieView {

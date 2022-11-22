@@ -1,5 +1,5 @@
 <template>
-  <div class="card text-bg-dark" style="position: relative;">
+  <div class="card text-bg-dark col-2" style="position: relative; margin: 2%;">
     <img :src="image_url" class="card-img" alt="..." style="width: 100%;" @click="detailGo">
     <div class="card-img-overlay" @click="detailGo">
       <!-- <i @click="likes" class="fa-regular fa-circle-xmark fa-xl" style="position: absolute; right: 3%;"></i> -->

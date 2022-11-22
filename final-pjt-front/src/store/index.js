@@ -15,6 +15,7 @@ export default new Vuex.Store({
   ],
   state: {
     commentlist: [],
+    basemovies: [],
     movies: [],
     randommovie: '',
     watchesList: [],
@@ -27,9 +28,9 @@ export default new Vuex.Store({
     token: '',
     reviewRate: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     genrelist: {},
-    yearname: [ '80년대', '90년대', '2000년대' , '2010년대', '2020년대'],
+    yearname: ['1980년대', '1990년대', '2000년대' , '2010년대', '2020년대'],
     genrename: [
-      '전체',"액션","모험","애니메이션","코미디","범죄","다큐멘터리","드라마","가족","판타지",
+      "액션","모험","애니메이션","코미디","범죄","다큐멘터리","드라마","가족","판타지",
       "역사","공포","음악","미스터리","로맨스","SF","TV 영화","스릴러","전쟁","서부"],
   },
   getters: {
@@ -47,6 +48,7 @@ export default new Vuex.Store({
       state.commentlist.push(data)
     },
     MOVIE_GET(state, data) {
+      state.basemovies = data
       state.movies = data
     },
     CREATE_WATCH(state, data) {
@@ -65,24 +67,34 @@ export default new Vuex.Store({
       router.push({ name: 'Login'})
     },
     FILTERING(state) {
+      console.log(state.usernofear)
+      console.log(state.usernothrill)
       if (state.usernofear) {
         let filtermovies = []
-        for (let i=0; i<state.movies.length; i++) {
-          if (state.movies[i].genres.includes(27)) {
-            continue
-          } else {
-            filtermovies.push(state.movies[i])
+        for (let i=0; i<state.basemovies.length; i++) {
+          let isfear = false
+          for (let j=0; j<state.basemovies[i].genres.length; j++) {
+            if (state.basemovies[i].genres[j].id === 27) {
+              isfear = true
+            }
+          }
+          if (isfear === false) {
+            filtermovies.push(state.basemovies[i])
           }
         }
         state.movies = filtermovies
       }
       if (state.usernothrill) {
         let filtermovies2 = []
-        for (let i=0; i<state.movies.length; i++) {
-          if (state.movies[i].genres.includes(53)) {
-            continue
-          } else {
-            filtermovies2.push(state.movies[i])
+        for (let i=0; i<state.basemovies.length; i++) {
+          let isthrill = false
+          for (let j=0; j<state.basemovies[i].genres.length; j++) {
+            if (state.basemovies[i].genres[j].id === 53) {
+              isthrill = true
+            }
+          }
+          if (isthrill === false) {
+            filtermovies2.push(state.basemovies[i])
           }
         }
         state.movies = filtermovies2
@@ -147,7 +159,7 @@ export default new Vuex.Store({
         .then(res => {
           const data = _.shuffle(res.data)
           context.commit('MOVIE_GET', data)
-          context.commit('FILTERING', { 'nofear': this.state.usernofear, 'nothrill': this.state.usernothrill })
+          context.commit('FILTERING')
           // console.log(res, context)
         })
         .catch(err => console.log(err))
@@ -254,9 +266,12 @@ export default new Vuex.Store({
                 }
               })
                 .then(res => {
+                  console.log(12312432423)
+                  console.log(res.data)
+                  this.state.movies = this.state.basemovies
+                  context.commit('CHANGESETTINGS', res.data[0])
                   context.commit('SAVE_TOKEN', [token, res.data[0]])
-                  // context.commit('FILTERING', { 'nofear': res.data[0]['nofear'], 'nothrill': res.data[0]['nothrill'] })
-                  this.movieGet()
+                  context.commit('FILTERING')
                 })
                 .catch(err => {
                   console.log(err)
@@ -294,8 +309,17 @@ export default new Vuex.Store({
         .then(res => {
           console.log(res.data)
           context.commit('CHANGESETTINGS', res.data[0])
-          // context.commit('FILTERING', { 'nofear': res.data[0]['nofear'], 'nothrill': res.data[0]['nothrill'] })
-          this.movieGet()
+          axios({
+            method: 'get',
+            url: `${API_URL}/movies/`,
+          })
+            .then(res => {
+              const data = _.shuffle(res.data)
+              context.commit('MOVIE_GET', data)
+              context.commit('FILTERING')
+              // console.log(res, context)
+            })
+            .catch(err => console.log(err))
         })
         .catch(err => {
           console.log(err)

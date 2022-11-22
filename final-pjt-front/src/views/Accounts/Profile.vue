@@ -8,13 +8,14 @@
         </div>
       </div>
       <br>
-      <div style="display: flex;">
+      <div style="display: flex; justify-content: space-evenly;">
         <div>
           <h5>팔로워: {{ followerscnt }}</h5>
           <h5>팔로우: {{ followingscnt }}</h5>
         </div>
-        <button type="button" class="btn btn-light" @click="followThis">Follow</button>
+        <button v-if="me.username != person.personname" type="button" class="btn btn-light m-2" @click="followThis">Follow</button>
       </div>
+      <button v-if="me.username == person.personname" type="button" class="btn btn-light m-2" @click="reviewGo">나의 영화 감상 기록</button>
     </div>
   </div>
 </template>
@@ -28,7 +29,7 @@ export default {
   data() {
     return {
       personname: this.$route.params.personname,
-      me: [],
+      me: {},
       person: {},
       followerscnt: 0,
       followingscnt: 0,
@@ -36,6 +37,9 @@ export default {
   },
   created() {
     this.getPerson()
+    this.getMyInfo()
+    console.log(234234)
+    console.log(this.$route.params.personname)
   },
   methods: {
     getPerson() {
@@ -55,6 +59,7 @@ export default {
               break
             }
           }
+          console.log(prmts)
           this.person = prmts
           this.getPersonFollow(prmts.pk)
         })
@@ -72,8 +77,9 @@ export default {
           }
       })
         .then(res => {
-          console.log('++++')
-          console.log(res)
+          console.log(4444)
+          console.log(this.me)
+          console.log(this.person)
           this.followerscnt = res.data.followers.length
           this.followingscnt = res.data.followings.length
         })
@@ -122,13 +128,16 @@ export default {
             }
           })
             .then(res => {
-              console.log(res.data)
+              this.me = res.data
             })
             .catch(err => {
               console.log(err)
             })
           }
         },
+      reviewGo() {
+        this.$router.push({ name:"ReviewsView", params: { username: this.$store.state.username } })
+      }
     },
     
 }

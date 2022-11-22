@@ -37,13 +37,16 @@
     <div class="col-1"></div>
     <!-- 별점, 찜, 댓글 -->
     <div class="col-8 right">
-      <div id="star-graph" style="padding: 5px 0px 5px; height: 25%;">
-        <h1>그래프 자리</h1>
-        <span class="box" style="background-color:azure">
-
-        </span>
-        <span class="box">
-          
+      <div id="star-graph" style="padding: 5px 0px 5px; background-color: black;">
+        <span style="display: flex; padding: 5px 0px 5px; justify-content: space-evenly;">
+          <div>
+            <ageBarView
+            :movie="movie"/>
+          </div>
+          <div style="display: flex; align-items: center; margin-right:1%;">
+            <genderBarView
+            :movie="movie"/>
+          </div>
         </span>
       </div>
       <div id="star-jjim" style="margin: 1%;height: 15%;">
@@ -79,12 +82,14 @@
   </div>
 </template>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 import axios from 'axios'
+import MovieCommentsList from '@/views/Movies/MovieCommentsList'
+import ageBarView from '@/views/Movies/ageBarView'
+import genderBarView from '@/views/Movies/genderBarView'
 
 const API_URL = 'http://127.0.0.1:8000'
-
-import MovieCommentsList from '@/views/Movies/MovieCommentsList'
 
 export default {
   
@@ -103,7 +108,7 @@ export default {
     this.getMovieDetail()
     this.getCommentDetail()
   },
-  components: { MovieCommentsList, },
+  components: { MovieCommentsList, ageBarView, genderBarView, },
   methods: {
     getMovieDetail() {
       axios({
@@ -188,6 +193,9 @@ export default {
           axios({
             method: 'post',
             url: `${API_URL}/movies/${this.movie.id}/${this.$store.state.userid}/likes/`,
+            headers: {
+              "Authorization": `Token ${this.$store.state.token}`
+            }
           })
             .then(res => {
               console.log(res)

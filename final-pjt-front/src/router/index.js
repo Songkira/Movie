@@ -8,7 +8,8 @@ import LoginView from '../views/Accounts/LoginView.vue'
 import MySettings from '../views/Accounts/MySettings.vue'
 import DetailView from '@/views/Movies/DetailView.vue'
 import RecommendView from '../views/Movies/RecommendView.vue'
-// import NotFound from '../views/404.vue'
+import ReviewsView from '../views/Accounts/ReviewsView.vue'
+import NotFound from '../views/404.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/movies',
     name: 'MovieView',
     component: MovieView
+  },
+  {
+    path: '/reviews/:username',
+    name: 'ReviewsView',
+    component: ReviewsView
   },
   {
     path: '/random',
@@ -56,7 +62,7 @@ const routes = [
   {
     path: '/*',
     name: 'notFound',
-    component: MovieView
+    component: NotFound
   },
 ]
 

@@ -5,8 +5,8 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import status
 from django.shortcuts import get_object_or_404, get_list_or_404
-from .serializers import MovieSerializer, GenreSerializer, ActorSerializer, DirectorSerializer, CommentSerializer, StarSerializer
-from .models import Movie, Actor, Director, Genre, Comment, Star
+from .serializers import MovieSerializer, GenreSerializer, ActorSerializer, DirectorSerializer, CommentSerializer, StarSerializer, ReviewSerializer
+from .models import Movie, Actor, Director, Genre, Comment, Star, Review
 
 
 # Create your views here.
@@ -15,7 +15,16 @@ def movies_list(request):
     if request.method == 'GET':
         movies = get_list_or_404(Movie)
         serializer = MovieSerializer(movies, many=True)
-        return Response(serializer.data)
+        results = []
+        for i in range(len(movies)):
+            genres = movies[i].genres.values()
+            director = movies[i].director.values()
+            serializer = MovieSerializer(movies[i])
+            data = serializer.data
+            data['director'] = director[0]
+            data['genres'] = genres
+            results.append(data)
+        return Response(results)
 
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
@@ -92,6 +101,13 @@ def star_test(request, movie_pk):
             serialzer.save(user=request.user)
             return Response(movie.vote_average)
 
+@api_view(['GET'])
+def starinfo(requset, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    # serializer = MovieSerializer(movie)
+    stars = movie.star_set.values()
+    return Response(stars, status=status.HTTP_200_OK)
+
 @api_view(['PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def comment_detail(request, comment_pk):
@@ -160,4 +176,26 @@ def mycomments(request, person_pk):
     user = get_object_or_404(User, pk=person_pk)
     comments = user.comment_set.values()
     return Response(comments, status=status.HTTP_200_OK)
+
+@api_view(['POST', 'GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def review(request, movie_pk, my_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(get_user_model(), pk=my_pk)
+    if request.method == 'POST':
+        serializer = ReviewSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(movie=movie, user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    elif request.method == 'GET':
+        myreviews = user.review_set.values()
+        return Response(myreviews, status=status.HTTP_200_OK)
+    elif request.method == 'DELETE':
+        user = get_object_or_404(get_user_model(), pk=my_pk)
+        review = user.review_set.get(pk=movie_pk)
+        review.delete()
+        result = {'댓글 삭제'}
+        return Response(result)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 

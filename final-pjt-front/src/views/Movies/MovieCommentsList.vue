@@ -11,7 +11,7 @@
           <h6>{{ comment.content }}</h6>
         </span>
         <span class="col-1">
-          <i @click="deleteComment" class="fa-solid fa-xmark"></i>
+          <i v-if="this.$store.state.username === comment.username" @click="deleteComment" class="fa-solid fa-xmark"></i>
         </span>
       </div>
     </div>

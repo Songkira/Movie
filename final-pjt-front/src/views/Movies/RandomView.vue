@@ -2,7 +2,7 @@
   <div id="app">
     <br>
     <button type="button" class="btn btn-light" @click="randomMovie">PICK</button>
-    <div style="display: flex; justify-content: center;">
+    <div style="display: flex; justify-content: center; margin: 3%;">
       <div class="card mb-3" style="max-width: 750px; max-height: 380px;" v-if="movie">
         <div class="row g-0" style="height: 100%;">
           <div class="col-md-4" style="height: 100%;">
@@ -20,15 +20,6 @@
         </div>
       </div>
     </div>
-    <!-- <div style="height: 50%; display: flex; justify-content: center;">
-      <div class="card" style="width: 30%; background-color: #161e27; color: white;" v-if="movie">
-        <img :src="randomImage" alt="">
-        <div style="margin:1%; width: auto;">
-        <h4 style="margin: 10%;" ><b>{{ movie?.title }}</b></h4>
-        <h5>평점: {{ movie?.vote_average }}</h5>
-        </div>
-      </div>
-    </div> -->
     <p></p>
   </div>
 </template>
@@ -62,8 +53,7 @@ export default {
   background-size: cover;
   height: 100%;
 }
-.card {
-  margin: 3%;
+.card-body {
   background-color: #161e27;
 }
 #randomoverview {

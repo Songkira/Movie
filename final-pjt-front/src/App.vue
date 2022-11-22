@@ -12,6 +12,9 @@
               <router-link class="nav-link" :to="{ name: 'MovieView' }"><b>Movies</b></router-link>
             </li>
             <li v-if="this.$store.getters.isLogin === true" class="nav-item" style="margin:auto;">
+              <router-link class="nav-link" :to="{ name: 'RecommendView' }"><b>Recommend</b></router-link>
+            </li>
+            <li v-if="this.$store.getters.isLogin === true" class="nav-item" style="margin:auto;">
               <router-link class="nav-link" :to="{ name: 'RandomView' }"><b>Random</b></router-link>
             </li>
             <li v-if="this.$store.getters.isLogin === false" class="nav-item" style="margin:auto;">
@@ -49,7 +52,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <h3 class="modal-title fs-5" style="color: black;" id="exampleModalLabel">영화 검색</h3>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="close"></button>
           </div>
           <div class="modal-body" @submit.prevent="searchMovie">
@@ -100,7 +103,7 @@ export default {
     },
     wordchange(event) {
       this.searchword = event.target.value
-      console.log(this.searchword, typeof(this.searchword))
+      // console.log(this.searchword, typeof(this.searchword))
       this.searchMovie()
     },
     close() {
