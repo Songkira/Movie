@@ -193,6 +193,6 @@ def tmdb_data(request):     # 1. DB 처음 불러올 때
     Director.objects.all().delete()
 
     tmdb_genres()
-    for i in range(1, 11):
+    for i in range(1, 21):
         movie_data(i)
     return HttpResponse('OK >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')

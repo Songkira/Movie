@@ -31,24 +31,26 @@ def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     genres = movie.genres.values()
     director = movie.director.values()
+    likeusers = movie.like_users.values()
     if request.method == 'GET':
         serializer = MovieSerializer(movie)
         data = serializer.data
         data['director'] = director[0]
         data['genres'] = genres
+        data['like_users'] = likeusers
         return Response(data)
 
-@api_view(['GET'])
-def genres_list(request):
-    if request.method == 'GET':
-        genres = get_list_or_404(Genre)
-        genre_list = []
-        # print(genres)
-        serializer = GenreSerializer(genres, many=True)
-        for i in range(len(genres)):
-            genre_list.append(serializer.data[i].values())
-        # print(genre_list)
-        return Response(genre_list)
+# @api_view(['GET'])
+# def genres_list(request):
+#     if request.method == 'GET':
+#         genres = get_list_or_404(Genre)
+#         genre_list = []
+#         # print(genres)
+#         serializer = GenreSerializer(genres, many=True)
+#         for i in range(len(genres)):
+#             genre_list.append(serializer.data[i].values())
+#         # print(genre_list)
+#         return Response(genre_list)
 
 @api_view(['GET'])
 def state_list(request):
@@ -177,25 +179,35 @@ def mycomments(request, person_pk):
     comments = user.comment_set.values()
     return Response(comments, status=status.HTTP_200_OK)
 
-@api_view(['POST', 'GET', 'DELETE'])
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def reviewget(request, my_pk):
+    user = get_object_or_404(get_user_model(), pk=my_pk)
+    if request.method == 'GET':
+        myreviews = user.review_set.values()
+        for i in range(len(myreviews)):
+            movieid = myreviews[i]['movie_id']
+            movie = Movie.objects.values().filter(pk=movieid)
+            myreviews[i]['movieinfo'] = movie[0]
+        return Response(myreviews, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def review(request, movie_pk, my_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     user = get_object_or_404(get_user_model(), pk=my_pk)
     if request.method == 'POST':
         serializer = ReviewSerializer(data=request.data)
-        print(request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(movie=movie, user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    elif request.method == 'GET':
-        myreviews = user.review_set.values()
-        return Response(myreviews, status=status.HTTP_200_OK)
     elif request.method == 'DELETE':
-        user = get_object_or_404(get_user_model(), pk=my_pk)
-        review = user.review_set.get(pk=movie_pk)
+        print(0)
+        review = user.review_set.get(pk=request.data['reviewid'])
+        print(1)
         review.delete()
-        result = {'댓글 삭제'}
+        result = {'리뷰 삭제'}
         return Response(result)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 

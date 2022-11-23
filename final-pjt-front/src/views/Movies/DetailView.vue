@@ -4,7 +4,7 @@
     <div class="col-3 left">
       <div style="position: relative;">
         <img :src="image_url" class="card-img-top" alt="movie_image">
-        <i style="position: absolute; left: -0.5%; margin: 2%;" @click="likes" class="fa-solid fa-heart fa-2x"></i>
+        <i id="heart" style="position: absolute; left: -0.5%; margin: 2%; color: lightgray;" @click="likes" class="fa-solid fa-heart fa-2x"></i>
       </div>
       <br>
       <div>
@@ -37,15 +37,19 @@
     <div class="col-1"></div>
     <!-- 별점, 찜, 댓글 -->
     <div class="col-8 right">
-      <div id="star-graph" style="padding: 5px 0px 5px; background-color: black;">
+      <div id="star-graph" style="padding: 5px 0px 5px;">
         <span style="display: flex; padding: 5px 0px 5px; justify-content: space-evenly;">
           <div>
             <ageBarView
             :movie="movie"/>
           </div>
           <div style="display: flex; align-items: center; margin-right:1%;">
-            <genderBarView
-            :movie="movie"/>
+            <!-- <genderBarView
+            :movie="movie"/> -->
+            <img :src="require('@/assets/female.png')" alt="" style="height: 100px; width:100px;">
+            <p style="font-size: large;">{{ this.gender_average[0] }}</p>
+            <img :src="require('@/assets/male.png')" alt="" style="height: 100px; width:100px;">
+            <p style="font-size: large;">{{ this.gender_average[1] }}</p>
           </div>
         </span>
       </div>
@@ -87,7 +91,6 @@
 import axios from 'axios'
 import MovieCommentsList from '@/views/Movies/MovieCommentsList'
 import ageBarView from '@/views/Movies/ageBarView'
-import genderBarView from '@/views/Movies/genderBarView'
 
 const API_URL = 'http://127.0.0.1:8000'
 
@@ -102,13 +105,17 @@ export default {
       commentlist: null,
       MymovieRate: 0,
       Star: 0,
+      gender_list: [0, 0],
+      gender_count: [0, 0],
+      gender_average: [0, 0],
     }
   },
   created() {
     this.getMovieDetail()
     this.getCommentDetail()
+    this.plus()
   },
-  components: { MovieCommentsList, ageBarView, genderBarView, },
+  components: { MovieCommentsList, ageBarView, },
   methods: {
     getMovieDetail() {
       axios({
@@ -116,7 +123,17 @@ export default {
         url: `${API_URL}/movies/${this.$route.params.id}/`
       })
       .then((res) => {
-        this.movie = res.data 
+        this.movie = res.data
+        let islike = false
+        for (let i=0; i<res.data.like_users.length; i++) {
+          if (res.data.like_users[i].id === this.$store.state.userid) {
+            islike = true
+          }
+        }
+        if (islike === true) {
+          const heartTag = document.querySelector('#heart')
+          heartTag.style.color = 'red'
+        }
         this.image_url = `https://www.themoviedb.org/t/p/w600_and_h900_bestv2/${ res.data.poster_path }`
       })
       .catch((err) => { console.log (err) })
@@ -168,6 +185,7 @@ export default {
       .then((res) => {
         console.log(res)
         this.Star = res.data
+        this.$router.go({name: 'DetailView', params: { id: this.movie.id }})
       })
       .catch((err) => {
         console.log(err)
@@ -187,8 +205,13 @@ export default {
       })
       .catch((err) => { console.log (err) })
     },
-    likes() {
-      console.log(this.movie)
+    likes(event) {
+      const tag = event.target
+      if (tag.style.color === 'lightgray') {
+        tag.style.color = 'crimson'
+      } else {
+        tag.style.color = 'lightgray'
+      }
       if (this.$store.state.token != '') {
           axios({
             method: 'post',
@@ -205,6 +228,42 @@ export default {
             })
           }
     },
+    plus() {
+      axios({
+        method: 'get',
+        url: `${API_URL}/movies/${this.$route.params.id}/starinfo/`,
+      })
+      .then(res => {
+          this.starlist = res.data
+          axios({
+          method: 'get',
+          url: `${API_URL}/accounts-custom/usersinfo/`,
+        })
+        .then((res) => {
+          this.userlist = res.data
+          this.gender_list= [0, 0]
+          this.gender_count = [0, 0],
+          this.gender_average = [0, 0]
+      for (var i = 0; i < this.starlist.length; i++) {
+        for (var idx = 0; idx < this.userlist.length; idx++) {
+          // console.log(i, idx)
+          if (this.starlist[i]['user_id'] === this.userlist[idx]['id']) { 
+            if (this.userlist[idx].sex === 'm') {
+              this.gender_count[1] += 1
+              this.gender_list[1] += this.starlist[i]['rank']
+              this.gender_average[1] = (this.gender_list[1] / this.gender_count[1]).toFixed(2)
+            } else if (this.userlist[idx].sex === 'f') {
+              this.gender_count[0] += 1
+              this.gender_list[0] += this.starlist[i]['rank']
+              this.gender_average[0] = (this.gender_list[0] / this.gender_count[0]).toFixed(2)
+              console.log(this.gender_average)
+            }
+            }
+          }
+        }
+      })
+    })
+    }
   },
 }
 </script>

@@ -1,17 +1,17 @@
 <template>
   <div id="recommend">
     <div>
-      <h3 class="m-3">{{ this.$store.state.username }}님께 추천해드릴게요!</h3>
-      <div v-if="items.length === 0">
-        <div style="height:550px;"></div>
+      <h3 class="m-3 animate__animated animate__bounce" style=" margin-bottom: 0px;">{{ this.$store.state.username }}님께 추천해드릴게요!</h3>
+      <div v-if="items.length === 0" >
+        <div style="height:600px;"></div>
       </div>
-      <div v-if="items" style="display: flex; justify-content: space-evenly;">
-        <RecommandListViewVue v-for="item in items" :key="item.id" :item="item" />
+      <div v-if="items" style="display: flex; justify-content: space-evenly; " >
+        <RecommandListViewVue style="height:600px;" class="animate__animated animate__flipInY" v-for="(item, idx) in items" :key="item.id" :item="item" :idx="idx"/>
       </div>
-      <div style="display: flex; justify-content: center;">
+      <div style="display: flex; justify-content: center; ">
         <select class="form-select form-select-xs m-2" aria-label=".form-select-xs example" name="gnr" v-model="selectGenres" id="gnr">
           <option class="content-font" style="color:black;" value='전체' selected="selected">전체</option>
-          <option class="content-font" style="color:black;" :value="gnr" v-for="(gnr, idx) in this.$store.state.genrename" :key="idx">{{ gnr }}</option>
+          <option class="content-font" style="color:black;" :value="gnr" v-for="(gnr, idx) in this.genrename" :key="idx">{{ gnr }}</option>
         </select>
         <select class="form-select form-select-xs m-2" aria-label=".form-select-xs example" name="country" v-model="selectCountry" id="country">
           <option class="content-font" style="color:black;" value='전체' selected="selected">전체</option>
@@ -30,6 +30,7 @@
 <script>
 import RecommandListViewVue from '@/views/Movies/RecommandListView';
 
+import 'animate.css'
 import axios from 'axios'
 const API_URL = 'http://127.0.0.1:8000'
 
@@ -43,24 +44,29 @@ export default {
       selectCountry: '전체',
       selectYear: '전체',
       countryname_list: [],
+      yearname: [ '80년대', '90년대', '2000년대', '2010년대', '2020년대'],
+      genrename: [
+      "액션","모험","애니메이션","코미디","범죄","다큐멘터리","드라마","가족","판타지",
+      "역사","공포","음악","미스터리","로맨스","SF","TV 영화","스릴러","전쟁","서부"],
     }
   },
   created() {
     this.stateGet()
-    this.genreGet()
+    // this.genreGet()
     this.items = []
   },
   methods: {
-    genreGet() {
-      this.$store.dispatch('genreGet')
-    },
+    // genreGet() {
+    //   this.$store.dispatch('genreGet')
+    // },
     filterMovie() {
       this.items = []
       for (const movie of this.movies) {
-        console.log(movie)
+        // console.log(movie)
         const name = movie.production_countries_name
         const release_date = movie.release_date.slice(0,4)
         for (const gen of movie.genres) {
+          console.log(gen.name)
           if (gen.name === this.selectGenres || this.selectGenres === '전체') {
             if (name === this.selectCountry || this.selectCountry === '전체') {
               if (this.selectYear === '전체') {
@@ -83,7 +89,9 @@ export default {
               }
             }
           }
-          break
+          if (this.items.includes(movie)) {
+            break
+          }
         }
       }
       this.sortBy()
@@ -113,10 +121,7 @@ export default {
     },
   },
   computed: {
-    // genrelist() { return this.$store.state.genrelist },
     movies() { return this.$store.state.movies },
-    yearname() { return this.$store.state.yearname }
-    
   }
 }
 </script>
@@ -124,5 +129,8 @@ export default {
 <style>
   #recommend {
     height: 100vh;
+  }
+  :root {
+    --animate-delay: 2s;
   }
 </style>

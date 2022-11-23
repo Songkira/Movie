@@ -3,7 +3,7 @@
     <div class="card" style="height: auto;">
       <div class="card-body" style="display: flex; width:100%; height:auto; background-color: #2c3e50;">
         <span class="row-12 col-2" style="background-color: #161e27; border-radius: 4px;">
-          <img id="personimg" :src="require(`@/assets/user.jpg`)" style="width:60%; margin: 10%;">
+          <img id="personimg" :src="require(`@/assets/catpic/cat_ (${comment.catpic}).jpg`)" style="width:60%; margin: 10%;">
           <br>
           <h5 @click="mypageGo"><b>{{ comment.username }}</b></h5>
         </span>

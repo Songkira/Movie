@@ -2,7 +2,7 @@
   <div>
     <div class="card text-bg-light col-10 col-sm-8 col-xl-6" style="margin: auto; margin-top: 5%">
       <!-- <img src="..." class="card-img" alt="..."> -->
-      <div class="card-body" style="width:100%; height: 100%;">
+      <div class="card-body" style="width:100%; height: 100%; background-color: rgb(0, 0, 0, 0.01);">
         <br>
         <h1>LogIn</h1>
         <br>

@@ -3,7 +3,7 @@
     <div v-if="LikesList[0].length" id="likeslist" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
-        <h4>내 친구 <b @click="personPageGo">{{ usernames[0] }}</b>님이 좋아해요</h4>
+        <h4>내 친구 <b @click="personPageGo" @mouseenter="selectCard" @mouseleave="selectCard">{{ usernames[0] }}</b>님이 좋아해요</h4>
       </div>
       <div style="display: flex; justify-content: center;">
       <FollowerLikesList
@@ -15,7 +15,7 @@
     <div v-if="LikesList[1].length" id="likeslist" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
-        <h4>내 친구 {{ usernames[1] }}님이 좋아해요</h4>
+        <h4>내 친구 <b @click="personPageGo" @mouseenter="selectCard" @mouseleave="selectCard">{{ usernames[1] }}</b>님이 좋아해요</h4>
       </div>
       <div style="display: flex; justify-content: space-evenly;">
       <FollowerLikesList
@@ -27,7 +27,7 @@
     <div v-if="LikesList[2].length" id="likeslist" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
-        <h4>내 친구 {{ usernames[2] }}님이 좋아해요</h4>
+        <h4>내 친구 <b @click="personPageGo" @mouseenter="selectCard" @mouseleave="selectCard">{{ usernames[2] }}</b>님이 좋아해요</h4>
       </div>
       <div style="display: flex; justify-content: space-evenly;">
       <FollowerLikesList
@@ -57,6 +57,7 @@
 import MovieCard from '@/views/Movies/MovieCard.vue'
 import FollowerLikesList from '@/views/Movies/FollowerLikesList.vue'
 import axios from 'axios'
+import _ from 'lodash'
 
 const API_URL = 'http://127.0.0.1:8000'
 export default {
@@ -73,7 +74,7 @@ export default {
         LikesList: [[],[],[]],
         usernames: [],
         selectSort: null,
-        sortList: ['전체', '인기도순', '평점순', '러닝타임순'],
+        sortList: ['랜덤순', '인기도순', '평점순', '러닝타임순'],
         movieslist: this.$store.state.movies,
     }
   },
@@ -140,9 +141,9 @@ export default {
         }
     },
     SortBy() {
-      if (this.selectSort === '전체') {
-        this.movieslist = this.$store.state.movies
-        this.movieslist = this.movieslist.slice(0, 20)
+      if (this.selectSort === '랜덤순') {
+        this.movieslist = _.shuffle(this.$store.state.movies)
+        // this.movieslist = this.movieslist.slice(0, 20)
         console.log(this.movieslist)
       }
       if (this.selectSort === '인기도순') {
@@ -168,13 +169,13 @@ export default {
       this.movieslist.sort(function(a, b) {
         return b.popularity - a.popularity
       })
-      this.movieslist = this.movieslist.slice(0, 20)
+      // this.movieslist = this.movieslist.slice(0, 20)
     },
     Vote() {
       this.movieslist.sort(function(a, b) {
         return b.vote_average - a.vote_average        
       })
-      this.movieslist = this.movieslist.slice(0, 20)
+      // this.movieslist = this.movieslist.slice(0, 20)
     },
     Runtime() {
       const movieslistruntime = []
@@ -187,11 +188,19 @@ export default {
       this.movieslist.sort(function(a, b) {
         return a.runtime - b.runtime
       })
-      this.movieslist = this.movieslist.slice(0, 20)
+      // this.movieslist = this.movieslist.slice(0, 20)
     },
     personPageGo(event) {
       this.$router.push({ name:"MyPage", params: { personname: event.target.innerText } })
-    }
+    },
+    selectCard(event) {
+      const card_index = event.target
+      if (card_index.style.color === 'pink') {
+        card_index.style.color = 'white'
+      } else {
+        card_index.style.color = 'pink'
+      }
+    },
   }
 }
 </script>

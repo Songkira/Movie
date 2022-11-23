@@ -2,9 +2,9 @@
   <div id="myprofile">
     <div id="myinfo" class="col-12" style="margin-left:5%;">
       <div style="display: flex;">
-        <img id="personimg" :src="require(`@/assets/user.jpg`)" style="width:40%;">
+        <img id="personimg" :src="require(`@/assets/catpic/cat_ (${person.catpic}).jpg`)" style="width:40%;">
         <div>
-          <h2>{{ person.personname }}</h2>
+          <h2>{{ person.username }}</h2>
         </div>
       </div>
       <br>
@@ -25,7 +25,7 @@ import axios from 'axios'
 
 const API_URL = 'http://127.0.0.1:8000'
 export default {
-  name: 'MyProfile',
+  name: 'ProFile',
   data() {
     return {
       personname: this.$route.params.personname,
@@ -56,11 +56,13 @@ export default {
             if (res.data[i].username === this.personname) {
               prmts.pk = res.data[i].id
               prmts.personname = res.data[i].username
+              this.person = res.data[i]
+              console.log('&&&&&')
+              console.log(this.person.catpic)
               break
             }
           }
           console.log(prmts)
-          this.person = prmts
           this.getPersonFollow(prmts.pk)
         })
         .catch(err => {
@@ -100,14 +102,14 @@ export default {
             this.me = res.data
             axios({
               method: 'post',
-              url: `${API_URL}/accounts-custom/${res.data.pk}/${this.person.pk}/follow/`,
+              url: `${API_URL}/accounts-custom/${res.data.pk}/${this.person.id}/follow/`,
               headers: {
                 "Authorization": `Token ${this.$store.state.token}`
               }
             })
               .then(res => {
                 console.log(res)
-                this.getPersonFollow(this.person.pk)
+                this.getPersonFollow(this.person.id)
               })
               .catch(err => {
                 console.log(err)

@@ -1,5 +1,8 @@
 <template>
-  <div class='first col-3'>
+  <div class='first col-3' style="margin: 0%;">
+    <i v-if="idx === 0" class="fa-solid fa-crown fa-3x" style="color: yellow;"></i>
+    <i v-if="idx === 1" class="fa-solid fa-crown fa-3x" style="color: lightgray;"></i>
+    <i v-if="idx === 2" class="fa-solid fa-crown fa-3x" style="color: brown;"></i>
     <router-link :to="{ name: 'DetailView', params: { id: item.id }}">
       <div class="card" style="background-color: #161e27; width: 220px; color: white; display: inline-block; margin: 3%;" @mouseenter="selectCard" @mouseleave="selectCard">
         <img :src="image_url" class="card-img-top" alt="movie_image">
@@ -29,6 +32,7 @@ export default {
   },
   props: {
     item: Object,
+    idx: Number,
   },
   created() {
     this.getMovieDetail()
@@ -60,6 +64,7 @@ export default {
 
 <style>
 .first{
+  display: flex;
   margin: 2%;
  }
  .card-text{

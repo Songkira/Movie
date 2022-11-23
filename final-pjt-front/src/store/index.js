@@ -24,14 +24,10 @@ export default new Vuex.Store({
     usernofear: false,
     usernothrill: false,
     usersex: '',
+    usercatpic: 0,
     password: '',
     token: '',
     reviewRate: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    genrelist: {},
-    yearname: ['1980년대', '1990년대', '2000년대' , '2010년대', '2020년대'],
-    genrename: [
-      "액션","모험","애니메이션","코미디","범죄","다큐멘터리","드라마","가족","판타지",
-      "역사","공포","음악","미스터리","로맨스","SF","TV 영화","스릴러","전쟁","서부"],
   },
   getters: {
     randomMovie(state) { return _.sample(state.movies)},
@@ -116,6 +112,7 @@ export default new Vuex.Store({
       }
       state.usersex = data[1]['sex']
       state.password = data[1]['password']
+      state.usercatpic = data[1]['catpic']
       router.push({ name: 'MovieView'})
     },
     DELETE_TOKEN(state) {
@@ -126,6 +123,7 @@ export default new Vuex.Store({
       state.usernothrill = false
       state.usersex = ''
       state.password = ''
+      state.usercatpic = 0
     },
     CHANGESETTINGS(state, data) {
       console.log(data)
@@ -140,15 +138,6 @@ export default new Vuex.Store({
         state.usernothrill = true
       }
     },
-    GENRE_GET(state, data) {
-      state.genrelist = data
-    },
-    // STATE_GET(state, data) {
-    //   state.statelist = data
-    // },
-    // DATE_GET(state, data) {
-    //   state.datelist = data
-    // },
   },
   actions: {
     movieGet(context) {
@@ -164,42 +153,6 @@ export default new Vuex.Store({
         })
         .catch(err => console.log(err))
     },
-
-    // stateGet(context) {
-    //   axios({
-    //     method: 'get',
-    //     url: `${API_URL}/movies/`,
-    //   })
-    //     .then(res => {
-    //       context.commit('STATE_GET', res.data.production_countries_name
-    //       )
-    //     })
-    //     .catch(err => console.log(err))
-    // },
-
-    genreGet(context) {
-      axios({
-        method: 'get',
-        url: `${API_URL}/movies/genres/`,
-      })
-        .then(res => {
-          context.commit('GENRE_GET', res.data)
-          console.log(res.data, context)
-        })
-        .catch(err => console.log(err))
-    },
-
-    // dateGet(context) {
-    //   axios({
-    //     method: 'get',
-    //     url: `${API_URL}/movies`,
-    //   })
-    //     .then(res => {
-    //       context.commit('DATE_GET', res.data)
-    //       // console.log(res, context)
-    //     })
-    //     .catch(err => console.log(err))
-    // },
 
     createWatch(context, watchList) {
       const watches = {
@@ -225,6 +178,7 @@ export default new Vuex.Store({
           birth: payload.birth,
           nofear: 'F',
           nothrill: 'F',
+          catpic: payload.catpic
         }
       })
         .then(res => {
@@ -238,7 +192,6 @@ export default new Vuex.Store({
     logIn(context, payload) {
       const username = payload.username
       const password = payload.password
-      // const token = 'Token 6b104660bdcbe43b6703812ea9ac605aaf7e797d'
       console.log(payload)
       axios({
         method: 'post',
@@ -284,6 +237,7 @@ export default new Vuex.Store({
         })
         .catch((err) => {
           console.log(err)
+          alert('닉네임과 비밀번호를 다시 확인해주세요.')
         })
     },
     logOut(context) {
@@ -317,7 +271,6 @@ export default new Vuex.Store({
               const data = _.shuffle(res.data)
               context.commit('MOVIE_GET', data)
               context.commit('FILTERING')
-              // console.log(res, context)
             })
             .catch(err => console.log(err))
         })
@@ -325,23 +278,9 @@ export default new Vuex.Store({
           console.log(err)
         })
     },
-    // createComment(context, comment) {
-    //   const commentItem = { 
-    //     content: comment
-    //   }
-    //   axios({
-    //     method: 'post',
-    //     url: `${API_URL}/movies/{}`
-    //   })
-    //   // console.log(newMessage)
-    //   context.commit('CREATE_COMMENT', commentItem)
-    // },
     deleteComment(context, comment) {
       context.commit('DELETE_COMMENT', comment)
     },
-    // updateComment(context, comment) {
-    //   context.commit('UPDATE_COMMENT', comment)
-    // },
   },
   modules: {
   }

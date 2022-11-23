@@ -27,13 +27,17 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
+    catpic = serializers.SerializerMethodField()
 
     def get_username(self, obj):
         return obj.user.username
 
+    def get_catpic(self, obj):
+        return obj.user.catpic
+    
     class Meta:
         model = Comment
-        fields = ( 'id','content','user','username', 'movie',)
+        fields = ( 'id','content','user','username', 'movie', 'catpic')
         # fields = ('content',)
         read_only_fields = ( 'user', 'movie')
 

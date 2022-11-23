@@ -26,9 +26,11 @@
             <li v-if="this.$store.getters.isLogin === true" class="nav-item" style="margin:auto;">
               <router-link class="nav-link" :to="{ name: 'Login' }"><b>Logout</b></router-link>
             </li>
+            
             <li v-if="this.$store.getters.isLogin === true" class="nav-item dropdown" style="width:150px; margin: auto;">
               <a class="nav-link dropdown-toggle" role="button" href="" data-bs-toggle="dropdown" aria-expanded="false">
-                <img id="personimg" :src="require(`@/assets/user.jpg`)" style="width:25%; margin-right: 3%;">
+                <img id="personimg" :src="require(`./assets/catpic/cat_ (${catnumber}).jpg`)" style="width:28%; margin-right: 3%;">
+                <!-- <img id="personimg" :src="require(usercatpic)" style="width:25%; margin-right: 3%;"> -->
                 <b>ID: {{ this.$store.state.username }}</b>
               </a>
               <ul class="dropdown-menu bg-dark">
@@ -87,10 +89,12 @@ export default {
       isLogin: this.$store.getters.isLogin,
       searchword: '',
       results: [],
+      catnumber: this.$store.state.usercatpic
     }
   },
   created() {
     this.movieGet()
+    console.log(this.$store.state.usercatpic)
   },
   watch: {
     searchword(word) {

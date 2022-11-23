@@ -52,7 +52,8 @@ export default {
           "username": this.$store.state.username,
           "password": this.$store.state.password,
           "sex": this.$store.state.usersex,
-          "nofear": result
+          "nofear": result,
+          "catpic": this.$store.state.usercatpic
         }
       })
         .then(res => {
@@ -81,7 +82,8 @@ export default {
           "username": this.$store.state.username,
           "password": this.$store.state.password,
           "sex": this.$store.state.usersex,
-          "nothrill": result
+          "nothrill": result,
+          "catpic": this.$store.state.usercatpic
         }
       })
         .then(res => {

@@ -9,6 +9,7 @@ import MySettings from '../views/Accounts/MySettings.vue'
 import DetailView from '@/views/Movies/DetailView.vue'
 import RecommendView from '../views/Movies/RecommendView.vue'
 import ReviewsView from '../views/Accounts/ReviewsView.vue'
+import HomeView from '../views/Movies/HomeView.vue'
 import NotFound from '../views/404.vue'
 
 Vue.use(VueRouter)
@@ -23,6 +24,11 @@ const routes = [
     path: '/mysettings',
     name: 'MySettings',
     component: MySettings
+  },
+  {
+    path: '/',
+    name: 'HomeView',
+    component: HomeView
   },
   {
     path: '/movies',

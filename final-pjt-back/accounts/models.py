@@ -8,3 +8,4 @@ class User(AbstractUser):
     followings = models.ManyToManyField('self', symmetrical=False, related_name='followers')
     nofear = models.CharField(max_length=1, choices=(('F', 'false'), ('T', 'true')), default='F')
     nothrill = models.CharField(max_length=1, choices=(('F', 'false'), ('T', 'true')), default='F')
+    catpic = models.IntegerField()

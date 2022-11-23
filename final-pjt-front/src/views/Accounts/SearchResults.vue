@@ -4,7 +4,7 @@
     <div class="card-img-overlay" style="width:150px;">
       <!-- <i @click="likes" class="fa-regular fa-circle-xmark fa-xl" style="position: absolute; right: 3%;"></i> -->
       <i style="position: absolute; right: 1%; top: -0.5%; margin: 2%;" @click="likes" class="fa-solid fa-heart fa-2x"></i>
-      <!-- <h5 class="card-title">{{ movie.title }}</h5> -->
+      <h5 class="card-title">{{ movie.title }}</h5>
     </div>
   </span>
 </template>
@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     detailGo() {
-      this.$router.push({ name:"DetailView", params: { id: this.movie.id } })
+      this.$emit('selectmv', this.movie)
     },
     likes() {
       if (this.$store.state.token != '') {
