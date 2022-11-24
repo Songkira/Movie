@@ -67,9 +67,11 @@
               v-for="movie in results"
               :key="movie.id"
               :movie="movie"
+              @selected="close"
               data-bs-dismiss="modal" aria-label="Close"
               />
             </div>
+            <img v-if="searchword === 'Catcha'" class="navbar-brand" type="button" :src="require(`./assets/logo.png`)" alt="" style="width: 70%;" @click="homeGo">
           </div>
         </div>
       </div>

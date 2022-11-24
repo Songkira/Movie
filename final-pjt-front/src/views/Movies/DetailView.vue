@@ -4,7 +4,7 @@
     <div class="col-3 left">
       <div style="position: relative;">
         <img :src="image_url" class="card-img-top" alt="movie_image">
-        <i id="heart" style="position: absolute; left: -0.5%; margin: 2%; color: lightgray;" @click="likes" class="fa-solid fa-heart fa-2x"></i>
+        <i v-if="this.$store.getters.isLogin === true" id="heart" style="position: absolute; left: -0.5%; margin: 2%; color: lightgray;" @click="likes" class="fa-solid fa-heart fa-2x"></i>
       </div>
       <br>
       <div>
@@ -53,6 +53,7 @@
           </div>
         </span>
       </div>
+      <br>
       <div id="star-jjim" style="margin: 1%;height: 15%;">
         <span class="col-5">
           <i class="fa-solid fa-star fa-3x" style="color: gold; margin:5%;"></i>
@@ -62,21 +63,23 @@
           <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="rate" v-model="MymovieRate" id="rate" style="height: 50%;">
             <option class="content-font" style="color:black;" :value="rate" v-for="(rate, idx) in this.$store.state.reviewRate" :key="idx">{{ rate }}</option>
           </select>
-          <button @click="starRate" type="button" class="btn btn-light" style="margin-left: 8%; height: 50%;">영화 평가하기</button>
+          <button v-if="this.$store.getters.isLogin === true" @click="starRate" type="button" class="btn btn-light" style="margin-left: 8%; height: 50%;">영화 평가하기</button>
+          <button v-if="this.$store.getters.isLogin === false" type="button" class="btn btn-light" style="margin-left: 8%; height: 50%;" disabled>영화 평가하기</button>
           <br>
         </span>
       </div>
       <br>
       <hr>
       <br>
-      <h3>감상평</h3>
+      <h3 style="color: yellow;">사용자 감상평</h3>
       <br>
-      <div id="comment-input" style="display: flex; align-items:center; margin: 1%; height: 15%;">
+      <div v-if="this.$store.getters.isLogin === true" id="comment-input" style="display: flex; align-items:center; margin: 1%; height: 15%;">
         <input class="form-control" style="width: 90%" type="text" placeholder="감상평을 공유해보세요!" aria-label="default input example" v-model.trim="content">
         <button @click="createComment" type="button" class="btn btn-light">입력</button>
       </div>
-      <small style="color: gray; margin-bottom: 3%;">{{ contentlength }} / 200</small>
-      <div id="comment-box" style="height: 45%; margin: 1%;">
+      <h5 v-if="this.$store.getters.isLogin === false">감상평을 남기려면 로그인하세요.</h5>
+      <small v-if="this.$store.getters.isLogin === true" style="color: gray; margin-bottom: 3%;">{{ contentlength }} / 200</small>
+      <div id="comment-box" style="height: 45%; margin: 1%; margin-left: 5%;">
         <MovieCommentsList
         v-for="comment of commentlist"
         :key="comment.pk"
@@ -173,9 +176,6 @@ export default {
       axios({
         method: 'get',
         url: `${API_URL}/movies/movie_comment/${this.$route.params.id}/`,
-        headers: {
-          Authorization: `Token ${this.$store.state.token}`
-        }
       })
       .then((res) => { 
         console.log(res)
@@ -286,11 +286,15 @@ export default {
   height: 100vh;
 }
 .left {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
   padding: 10px;
   float: left;
   width: 30%;
 }
 .right {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
   padding: 10px;
   float: right;
   width: 70%;

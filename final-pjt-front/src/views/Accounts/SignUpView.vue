@@ -6,7 +6,7 @@
         <form class="col-8" style="margin: auto;" @submit.prevent="signUp">
           <br>
           <div>
-            <h5>나의 프로필</h5>
+            <h5>나의 고양이 사진</h5>
             <div v-if="!randomnumber" id="personimg" style="display: flex; justify-content: center; align-items: center; width: 130px; height: 130px; margin: auto;">
               <i class="fa-solid fa-paw fa-3x"></i>
             </div>
@@ -19,17 +19,17 @@
             <label for="username" style="color: gray;">닉네임</label>
             <button type="button" class="btn btn-secondary col-3" @click="isdupli">중복 확인</button>
           </div>
-          <small v-show="this.namedupli" style="color: gray;">사용할 수 있는 닉네임입니다.</small>
+          <small class="mb-2" v-show="this.namedupli" style="color: gray;">사용할 수 있는 닉네임입니다.</small>
           <div class="form-floating mb-3">
             <input type="password" class="form-control" id="password1" v-model.trim="password1" placeholder="비밀번호">
             <label for="password1" style="color: gray;">비밀번호</label>
           </div>
 
-          <div class="form-floating" style="margin-bottom: 5%;">
+          <div class="form-floating" style="margin-bottom: 2%;">
             <input type="password" class="form-control" id="password2" v-model.trim="password2" placeholder="비밀번호 확인" @keyup="checkpassword">
             <label for="password2" style="color: gray;">비밀번호 확인</label>
           </div>
-          <small v-show="!passwordsame && password2 !== ''" style="color: gray;">비밀번호가 동일하지 않습니다.</small>
+          <small class="mb-2" v-show="!passwordsame && password2 !== ''" style="color: gray;">비밀번호가 동일하지 않습니다.</small>
 
           <div>
             <h5 for="example-datepicker">생년월일</h5>
@@ -50,9 +50,10 @@
             </label>
           </div>
           <br>
-          
+          <br>
           <button type="submit" class="btn btn-secondary">등록</button>
         </form>
+        <br>
       </div>
     </div>
   </div>

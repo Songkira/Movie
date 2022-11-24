@@ -1,5 +1,5 @@
 <template>
-  <div id="mysettings" class="col-8" style="display: flex; justify-content: center; margin: auto; margin-top: 5%;">
+  <div id="mysettings" class="col-5" style="display: flex; justify-content: center; margin: auto; margin-top: 5%;">
     <br>
     <div class="col-6" style="margin:5%;">
         <h3>개인 설정</h3>

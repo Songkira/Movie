@@ -86,7 +86,7 @@ export default {
     position: absolute;
     opacity: 0;
     top: 0;
-    right: -20px;
+    /* right: -20px; */
     transition: 0.5s;
   }
   button:hover span {

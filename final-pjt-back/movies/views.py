@@ -129,7 +129,7 @@ def comment_detail(request, comment_pk):
 def comment_list(request, movie_pk):
     if request.method == 'GET':
         movie = get_object_or_404(Movie, pk=movie_pk)
-        comments = movie.comment_set.all()
+        comments = movie.comment_set.all().order_by('-pk')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 

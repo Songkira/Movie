@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="height:100%; width:100%;">
+    <div style="height:100%; width:100%; margin: auto;">
       <Pie
         style="height:250px; width:250px;"
         :chart-options="chartOptions"

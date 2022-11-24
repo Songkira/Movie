@@ -50,8 +50,8 @@
         />
       </div>
     </div>
-    <div style="position:fixed; top:80%; right:0%">
-        <img :src="require(`@/assets/cat.png`)" alt="cinema_img" style="height: 150px; width: 150px;">
+    <div style="position:fixed; top:85%; right:0%">
+        <img :src="require(`@/assets/cat.png`)" alt="cinema_img" style="height: 100px; width: 100px;">
     </div>
   </div>
 </template>

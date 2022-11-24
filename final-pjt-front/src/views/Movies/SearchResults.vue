@@ -23,6 +23,7 @@ export default {
   methods: {
     selected() {
       this.$router.push({ name:"DetailView", params: { id: this.movie.id } })
+      this.$emit('selected')
     },
   }
 }

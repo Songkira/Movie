@@ -3,7 +3,7 @@
     <div id="myinfo" class="col-12" style="margin-left:5%;">
       <div style="display: flex;">
         <img v-if="this.person.length !== 0" id="personimg" :src="require(`@/assets/catpic/cat_ (${person?.catpic}).jpg`)" style="width:40%;">
-        <div>
+        <div style="margin: 10%;">
           <h2>{{ person.username }}</h2>
         </div>
       </div>
