@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-    <button type="button" class="btn btn-light col-6" v-if="!first" @click="randomMovie2">다시하기</button>
+    <button type="button" class="btn btn-light col-6" v-if="movie !== null" @click="randomMovie2">다시하기</button>
     <p></p>
   </div>
 </template>

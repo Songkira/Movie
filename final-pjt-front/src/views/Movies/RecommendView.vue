@@ -1,14 +1,10 @@
 <template>
   <div id="recommend">
     <div>
+      <br>
+      <br>
       <h3 class="m-3 animate__animated animate__bounce" style=" margin-bottom: 0px;">{{ this.$store.state.username }}님께 추천해드릴게요!</h3>
-      <div v-if="items.length === 0" >
-        <div style="height:600px;"></div>
-      </div>
-      <div v-if="items" style="display: flex; justify-content: space-evenly; " >
-        <RecommandListViewVue style="height:600px;" class="animate__animated animate__flipInY" v-for="(item, idx) in items" :key="item.id" :item="item" :idx="idx"/>
-      </div>
-      <div style="display: flex; justify-content: center; ">
+      <div style="display: flex; justify-content: space-evenly;">
         <select class="form-select form-select-xs m-2" aria-label=".form-select-xs example" name="gnr" v-model="selectGenres" id="gnr">
           <option class="content-font" style="color:black;" value='전체' selected="selected">전체</option>
           <option class="content-font" style="color:black;" :value="gnr" v-for="(gnr, idx) in this.genrename" :key="idx">{{ gnr }}</option>
@@ -22,7 +18,22 @@
           <option class="content-font" style="color:black;" :value="year" v-for="(year, idx) in this.yearname" :key="idx">{{ year }}</option>
         </select>
       </div>
-      <button type="button" class="btn btn-light" @click="filterMovie">추천</button>
+      <br>
+      <button type="button" class="btn btn-light col-3" @click="filterMovie">추천 받기!</button>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div v-if="items.length === 0" >
+        <div style="display: flex; justify-content: center; margin-top: 10%; height:600px;">
+          <h5 v-if="iszero">{{ this.$store.state.username }}님이 원하는 조건의 영화가 없습니다...</h5>
+        </div>
+      </div>
+      <div v-if="items" style="display: flex; justify-content: center; " >
+        <RecommandListViewVue style="height:600px;" class="animate__animated animate__flipInY" v-for="(item, idx) in items" :key="item.id" :item="item" :idx="idx"/>
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +59,7 @@ export default {
       genrename: [
       "액션","모험","애니메이션","코미디","범죄","다큐멘터리","드라마","가족","판타지",
       "역사","공포","음악","미스터리","로맨스","SF","TV 영화","스릴러","전쟁","서부"],
+      iszero: false,
     }
   },
   created() {
@@ -96,6 +108,11 @@ export default {
       }
       this.sortBy()
       this.items = this.items.slice(0, 3)
+      if (this.items.length === 0) {
+        this.iszero = true
+      } else {
+        this.iszero = false
+      }
     },
     stateGet() {
       axios({

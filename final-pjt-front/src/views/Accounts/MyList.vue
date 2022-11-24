@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>내가 찜한 영화</h1>
+    <h1>{{ personname }}님이 찜한 영화</h1>
     <div id="likemovie">
       <MyMoviesList
       v-for="(movie, idx) in likeMovies"
@@ -9,7 +9,7 @@
       @nolike="nolike(idx)"/>
     </div>
     <br>
-      <h1>나의 평가</h1>
+      <h1>{{ personname }}님의 영화 감상평</h1>
     <div id="mycomments">
       <MyCommentsList
       v-for="(comment, idx) in myComments"

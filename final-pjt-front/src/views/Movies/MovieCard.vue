@@ -12,23 +12,12 @@
               <span v-else-if="genre.id === 28 || genre.id === 53 || genre.id === 80" class="badge text-bg-warning" style="margin: 2%;">{{ genre.name }}</span>
               <span v-else class="badge text-bg-light" style="margin: 2%;">{{ genre.name }}</span>
             </span>
+            <br>
+            <br>
             <p class="card-overview" style=" text-align: justify; width:100%; overflow: hidden; text-overflow: ellipsis;">{{ movie.overview }}</p>
           </div>
         </div>
       </div>
-      <!-- <div class="card" style="background-color: #161e27; width:100%; color: white; display: inline-block; margin: 3%;" @mouseenter="selectCard" @mouseleave="selectCard">
-        <img :src="image_url" class="card-img-top" style="background-color: #161e27;" alt="movie_image" >
-        <div class="card-body" style="border: 1px solid #161e27;">
-          <h5 class="card-title"><b>{{ movie.title }}</b></h5>
-          <span v-for="genre in movie.genres" :key="genre.id">
-            <span v-if="genre.id === 27" class="badge text-bg-danger" style="margin: 2%;">{{ genre.name }}</span>
-            <span v-else-if="genre.id === 28 || genre.id === 53 || genre.id === 80" class="badge text-bg-warning" style="margin: 2%;">{{ genre.name }}</span>
-            <span v-else class="badge text-bg-light" style="margin: 2%;">{{ genre.name }}</span>
-          </span>
-          <br>
-          <p class="card-text" style="text-align: justify; width:100%; overflow: hidden; text-overflow: ellipsis;">{{ movie.overview }}</p>
-        </div>
-      </div> -->
     </router-link>
   </div>
 </template>
@@ -73,17 +62,9 @@ export default {
     textoverlay() {
       const tag = document.querySelector(`#spo${this.movie.id}`)
       if (tag.style.visibility === 'visible') {
-        console.log('----------------')
-        console.log(1)
         tag.style.visibility = 'hidden';
-        console.log(tag)
-        console.log('-------------')
       } else{
-        console.log('=========')
-        console.log(2)
         tag.style.visibility = 'visible';
-        console.log(tag)
-        console.log('=========')
       }
     }
   },

@@ -1,6 +1,6 @@
 <template>
-  <span class="card text-bg-dark" style="position: relative; width: 150px; margin: 0.5%;">
-    <img :src="image_url" class="card-img" alt="..." style="width: 150px;" @click="detailGo">
+  <span class="card text-bg-dark" style="position: relative; width: 150px; margin: 0.5%;" type="button" @click="detailGo">
+    <img :src="image_url" class="card-img" alt="..." style="width: 150px;">
     <div class="card-img-overlay" style="width:150px;">
       <i @click="likes" class="fa-regular fa-circle-xmark fa-xl" style="position: absolute; right: 3%;"></i>
       <!-- <h5 class="card-title">{{ movie.title }}</h5> -->

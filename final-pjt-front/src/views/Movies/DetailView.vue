@@ -46,23 +46,23 @@
           <div style="display: flex; align-items: center; margin-right:1%;">
             <!-- <genderBarView
             :movie="movie"/> -->
-            <img :src="require('@/assets/female.png')" alt="" style="height: 100px; width:100px;">
-            <p style="font-size: large;">{{ this.gender_average[0] }}</p>
-            <img :src="require('@/assets/male.png')" alt="" style="height: 100px; width:100px;">
-            <p style="font-size: large;">{{ this.gender_average[1] }}</p>
+            <img :src="require('@/assets/female.png')" alt="" style="height: 50px; width:70px;">
+            <p style="font-size: large; margin: 3%; margin-right: 20%;">{{ this.gender_average[0] }}</p>
+            <img :src="require('@/assets/male.png')" alt="" style="height: 50px; width:70px;">
+            <p style="font-size: large; margin: 3%; margin-right: 5%;">{{ this.gender_average[1] }}</p>
           </div>
         </span>
       </div>
       <div id="star-jjim" style="margin: 1%;height: 15%;">
         <span class="col-5">
-          <i class="fa-solid fa-star fa-2x" style="color: gold; margin:5%;"></i>
+          <i class="fa-solid fa-star fa-3x" style="color: gold; margin:5%;"></i>
           <h5><b>{{ this.Star === 0 ? movie?.vote_average: this.Star }}</b></h5>
         </span>
-        <span class="col-7" style="display: flex; justify-content: center; align-items: center;">
+        <span class="col-7" style="display: flex; justify-content: center; align-items: center; margin-left: 5%;">
           <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="rate" v-model="MymovieRate" id="rate" style="height: 50%;">
             <option class="content-font" style="color:black;" :value="rate" v-for="(rate, idx) in this.$store.state.reviewRate" :key="idx">{{ rate }}</option>
           </select>
-          <button @click="starRate" type="button" class="btn btn-light" style="margin-left: 3%; height: 50%;">영화 평가하기</button>
+          <button @click="starRate" type="button" class="btn btn-light" style="margin-left: 8%; height: 50%;">영화 평가하기</button>
           <br>
         </span>
       </div>
@@ -75,6 +75,7 @@
         <input class="form-control" style="width: 90%" type="text" placeholder="감상평을 공유해보세요!" aria-label="default input example" v-model.trim="content">
         <button @click="createComment" type="button" class="btn btn-light">입력</button>
       </div>
+      <small style="color: gray; margin-bottom: 3%;">{{ contentlength }} / 200</small>
       <div id="comment-box" style="height: 45%; margin: 1%;">
         <MovieCommentsList
         v-for="comment of commentlist"
@@ -108,12 +109,22 @@ export default {
       gender_list: [0, 0],
       gender_count: [0, 0],
       gender_average: [0, 0],
+      contentlength: 0,
     }
   },
   created() {
     this.getMovieDetail()
     this.getCommentDetail()
     this.plus()
+  },
+  watch: {
+    content(newcontent) {
+      if (newcontent.length > 200) {
+        alert('감상평이 너무 깁니다.')
+        this.username = newusername.slice(0, 200)
+      }
+      this.contentlength = newcontent.length
+    }
   },
   components: { MovieCommentsList, ageBarView, },
   methods: {
@@ -152,6 +163,7 @@ export default {
         console.log(res)
         this.getCommentDetail()
         this.content = null
+        this.contentlength = 0
       })
       .catch((err => {
         console.log(err)

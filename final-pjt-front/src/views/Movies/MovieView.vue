@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex column; align-items: center;">
-    <div v-if="LikesList[0].length" id="likeslist" style="margin: auto; margin-top: 2%;">
+    <div v-if="LikesList[0].length" id="likeslist" class="col-10" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
         <h4>내 친구 <b @click="personPageGo" @mouseenter="selectCard" @mouseleave="selectCard">{{ usernames[0] }}</b>님이 좋아해요</h4>
@@ -12,24 +12,24 @@
       :likemovie="likemovie"/>
       </div>
     </div>
-    <div v-if="LikesList[1].length" id="likeslist" style="margin: auto; margin-top: 2%;">
+    <div v-if="LikesList[1].length" id="likeslist" class="col-10" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
         <h4>내 친구 <b @click="personPageGo" @mouseenter="selectCard" @mouseleave="selectCard">{{ usernames[1] }}</b>님이 좋아해요</h4>
       </div>
-      <div style="display: flex; justify-content: space-evenly;">
+      <div style="display: flex; justify-content: center;">
       <FollowerLikesList
       v-for="likemovie in LikesList[1]"
       :key="likemovie.id"
       :likemovie="likemovie"/>
       </div>
     </div>
-    <div v-if="LikesList[2].length" id="likeslist" style="margin: auto; margin-top: 2%;">
+    <div v-if="LikesList[2].length" id="likeslist" class="col-10" style="margin: auto; margin-top: 2%;">
       <div>
         <br>
         <h4>내 친구 <b @click="personPageGo" @mouseenter="selectCard" @mouseleave="selectCard">{{ usernames[2] }}</b>님이 좋아해요</h4>
       </div>
-      <div style="display: flex; justify-content: space-evenly;">
+      <div style="display: flex; justify-content: center;">
       <FollowerLikesList
       v-for="likemovie in LikesList[2]"
       :key="likemovie.id"
@@ -37,18 +37,21 @@
       </div>
     </div>
     <br>
-    <div style="position: absolute;">
-      <div style="position: absolute; display: flex; margin-left: 80%;">
+    <div style="position: absolute; margin: auto;">
+      <div style="position: absolute; display: flex; margin-left: 70%;">
         <select  class="form-select" aria-label="Default select example" name="sort" v-model="selectSort" id="sort" style="height:1%;">
           <option class="content-font" style="color:black;" :value="sort" v-for="(sort, idx) in this.sortList" :key="idx">{{ sort }}</option>
         </select>
         <button type="button" class="btn btn-light" @click="SortBy">Go</button>
       </div>
       <h3>최신 영화</h3>
-      <div id="MovieView">
+      <div id="MovieView" class="col-10" style="margin: auto;">
         <MovieCard v-for="(movie) in movieslist" :key="movie.id" :movie="movie"
         />
       </div>
+    </div>
+    <div style="position:fixed; top:80%; right:0%">
+        <img :src="require(`@/assets/cat.png`)" alt="cinema_img" style="height: 150px; width: 150px;">
     </div>
   </div>
 </template>
@@ -80,13 +83,13 @@ export default {
   },
   created() {
     this.movieget()
-    this.followerOrRandom()
+    this.follower()
   },
   methods: {
     movieget() {
       this.$store.dispatch('movieGet')
     },
-    followerOrRandom() {
+    follower() {
       if (this.$store.state.token != '') {
         this.LikesList = [[],[],[]]
         axios({
@@ -97,18 +100,18 @@ export default {
             }
         })
             .then(res => {
-            if (res.data.followers.length) {
+            if (res.data.followings.length) {
                 let num = 1
-                if (res.data.followers.length < 3) {
-                    num = res.data.followers.length
+                if (res.data.followings.length < 3) {
+                    num = res.data.followings.length
                 } else {
                     num = 3
                 }
                 for (let i=0; i<num; i++) {
-                  this.usernames.push(res.data.followers[i].username)
+                  this.usernames.push(res.data.followings[i].username)
                     axios({
                         method: 'get',
-                        url: `${API_URL}/accounts-custom/${res.data.followers[i].id}/likeslist/`,
+                        url: `${API_URL}/accounts-custom/${res.data.followings[i].id}/likeslist/`,
                         headers: {
                             "Authorization": `Token ${this.$store.state.token}`
                         }

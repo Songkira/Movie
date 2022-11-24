@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button type="button" class="btn btn-light m-2" data-bs-toggle="modal" data-bs-target="#reviewcreate">영화 카드 추가</button>
+    <br>
+    <h3>나의 포토티켓 기록</h3>
+    <button type="button" class="btn btn-light m-2" data-bs-toggle="modal" data-bs-target="#reviewcreate">포토티켓 추가</button>
     <div style="display: flex; justify-content: center;">
       <div v-if="reviews.length !== 0" id="reviews" class="col-8">
         <ReviewsList
@@ -14,7 +16,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" style="color: black;" id="exampleModalLabel">영화 감상 카드 만들기</h1>
+            <h1 class="modal-title fs-5" style="color: black;" id="exampleModalLabel">영화 포토티켓 만들기</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="close"></button>
           </div>
           <div class="modal-body" @submit.prevent="searchMovie">
@@ -49,11 +51,15 @@
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" v-model.trim="createtitle"></textarea>
                 <label for="floatingTextarea" style="color: black;">제목</label>
               </div>
+              <small style="color: gray;">{{ titlelength }} / 100</small>
               <div class="form-floating">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 200px" v-model.trim="createcontent"></textarea>
                 <label for="floatingTextarea2" style="color: black;">내용</label>
               </div>
-              <button class="btn btn-outline-success" type="submit" data-bs-dismiss="modal" aria-label="Close" @click="close">입력</button>
+              <small style="color: gray; margin-bottom: 3%;">{{ contentlength }} / 300</small>
+              <br>
+              <br>
+              <button class="btn btn-outline-success" type="submit" data-bs-dismiss="modal" aria-label="Close">입력</button>
             </form>
           </div>
         </div>
@@ -82,11 +88,29 @@ export default {
       selectmovie: '',
       createtitle: '',
       createcontent: '',
-      createdate: '2000-01-01',
+      createdate: '2022-01-01',
+      titlelength: 0,
+      contentlength: 0,
     }
   },
   created() {
     this.getReviews()
+  },
+  watch: {
+    createtitle(newtitle) {
+      if (newtitle.length > 100) {
+        alert('제목이 너무 깁니다.')
+        this.createtitle = newtitle.slice(0, 100)
+      }
+      this.titlelength = newtitle.length
+    },
+    createcontent(newcontent) {
+      if (newcontent.length > 300) {
+        alert('내용이 너무 깁니다.')
+        this.createcontent = newcontent.slice(0, 300)
+      }
+      this.contentlength = newcontent.length
+    },
   },
   methods: {
     getReviews() {
@@ -98,9 +122,8 @@ export default {
           } 
     })
       .then(res => {
-        console.log('results')
-        console.log(res)
         this.reviews = res.data
+        this.SortDate()
       })
       .catch(err => {
         console.log(err)
@@ -113,7 +136,13 @@ export default {
     close() {
       this.searchword = ''
       this.results = []
-      this.searchMovie = {}
+      // this.searchMovie = {}
+      this.selectmovie = ''
+      this.createtitle = ''
+      this.createcontent = ''
+      this.createdate = '2022-01-01'
+      this.titlelength = 0
+      this.contentlength = 0
     },
     searchMovie() {
       if (this.searchword.length !== 0) {
@@ -152,10 +181,16 @@ export default {
         }
     })
       .then(() => {
+        this.close()
         this.$router.go({name: 'ReviewsView', params:{'username': this.$store.state.username}})
       })
       .catch(err => {
         console.log(err)
+      })
+    },
+    SortDate() {
+      this.reviews.sort(function(a, b) {
+        return new Date(b.watch_date) - new Date(a.watch_date)
       })
     }
   }

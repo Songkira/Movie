@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; justify-content: center; margin:2%;" @click="detailGo">
+    <div style="display: flex; justify-content: center; margin:2%;" type="button" @click="detailGo">
         <span class="col-3 col-xl-2 row">
             <img :src="image_url" id="mycommentimage" alt="...">
         </span>

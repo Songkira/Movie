@@ -77,6 +77,20 @@ export default {
       randomnumber: 0,
     }
   },
+  watch: {
+    username(newusername) {
+      if (newusername.length > 150) {
+        alert('닉네임이 너무 깁니다.')
+        this.username = newusername.slice(0, 150)
+      }
+    },
+    password1(newpassword) {
+      if (newpassword.length > 150) {
+        alert('비밀번호가 너무 깁니다.')
+        this.password1 = newpassword.slice(0, 150)
+      }
+    },
+  },
   methods: {
     signUp() {
       const username = this.username

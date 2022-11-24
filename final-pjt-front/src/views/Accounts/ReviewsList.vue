@@ -1,8 +1,8 @@
 <template>
-  <span class="card text-bg-dark" style="position: relative; width: 150px; margin: 0.5%;">
+  <span class="card text-bg-light" style="position: relative; margin: 0.5%; padding: 1.5%; padding-bottom: 0%;">
     <img :src="image_url" class="card-img" alt="..." style="width: 150px;">
     <div class="card-img-overlay" style="width:150px;" type="button" data-bs-toggle="modal" :data-bs-target="`#reviewread${review.id}`">
-      <i @click="reviewdelete" class="fa-regular fa-circle-xmark fa-xl" style="position: absolute; right: 3%;"></i>
+      <i @click="reviewdelete" class="fa-regular fa-circle-xmark fa-xl" style="position: absolute; bottom: 6%; right: -9%;"></i>
       <br>
       <br>
       <br>
@@ -10,8 +10,8 @@
       <br>
       <br>
       <br>
-      <h5 class="card-title" style="margin-top: 5%;">{{ review.watch_date }}</h5>
     </div>
+    <h6 class="card-title" style="margin-top: 5%; width:150px;"><small>{{ review.watch_date }}</small></h6>
     <!-- Modal -->
     <div class="modal fade" :id="`reviewread${review.id}`" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">

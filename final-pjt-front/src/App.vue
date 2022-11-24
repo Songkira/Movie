@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <div class="container-fluid">
-        <router-link class="navbar-brand" :to="{ name: 'MovieView' }"><b>웹 이름</b></router-link>
+        <img class="navbar-brand" type="button" :src="require(`./assets/logo.png`)" alt="" style="width: 10%;" @click="homeGo">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -27,7 +27,7 @@
               <router-link class="nav-link" :to="{ name: 'Login' }"><b>Logout</b></router-link>
             </li>
             
-            <li v-if="this.$store.getters.isLogin === true" class="nav-item dropdown" style="width:150px; margin: auto;">
+            <li v-if="this.$store.getters.isLogin === true && this.catnumber !== 0" class="nav-item dropdown" style="width:150px; margin: auto;">
               <a class="nav-link dropdown-toggle" role="button" href="" data-bs-toggle="dropdown" aria-expanded="false">
                 <img id="personimg" :src="require(`./assets/catpic/cat_ (${catnumber}).jpg`)" style="width:28%; margin-right: 3%;">
                 <!-- <img id="personimg" :src="require(usercatpic)" style="width:25%; margin-right: 3%;"> -->
@@ -89,12 +89,17 @@ export default {
       isLogin: this.$store.getters.isLogin,
       searchword: '',
       results: [],
-      catnumber: this.$store.state.usercatpic
     }
   },
   created() {
     this.movieGet()
+    // this.catnumber = this.$store.state.usercatpic
     console.log(this.$store.state.usercatpic)
+  },
+  computed: {
+    catnumber() {
+      return this.$store.state.usercatpic
+    }
   },
   watch: {
     searchword(word) {
@@ -130,6 +135,9 @@ export default {
       } else {
         this.results = []
       }
+    },
+    homeGo() {
+      this.$router.push({ name: 'HomeView' })
     }
   }
 }

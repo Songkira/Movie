@@ -1,18 +1,26 @@
 <template>
   <div class='first col-3' style="margin: 0%;">
-    <i v-if="idx === 0" class="fa-solid fa-crown fa-3x" style="color: yellow;"></i>
-    <i v-if="idx === 1" class="fa-solid fa-crown fa-3x" style="color: lightgray;"></i>
-    <i v-if="idx === 2" class="fa-solid fa-crown fa-3x" style="color: brown;"></i>
+    <i v-if="idx === 0" class="fa-solid fa-crown fa-3x" style="position:relative; color: goldenrod;"></i>
+    <h5 v-if="idx === 0" style="position:absolute; top: 10%; left: 4%; color: goldenrod;">1st</h5>
+    <i v-if="idx === 1" class="fa-solid fa-crown fa-3x" style="position:relative; color: silver;"></i>
+    <h5 v-if="idx === 1" style="position:absolute; top: 10%; left: 3%; color: silver;">2nd</h5>
+    <i v-if="idx === 2" class="fa-solid fa-crown fa-3x" style="position:relative; color: saddlebrown;"></i>
+    <h5 v-if="idx === 2" style="position:absolute; top: 10%; left: 3%; color: saddlebrown;">3rd</h5>
     <router-link :to="{ name: 'DetailView', params: { id: item.id }}">
       <div class="card" style="background-color: #161e27; width: 220px; color: white; display: inline-block; margin: 3%;" @mouseenter="selectCard" @mouseleave="selectCard">
         <img :src="image_url" class="card-img-top" alt="movie_image">
         <div class="card-body" style="border: 1px solid #161e27;">
           <h6 class="card-title"><b>{{ item.title }}</b></h6>
           <span v-for="genre in movie_genres" :key="genre.id">
-            <span class="badge text-bg-light" style="margin: 2%;">{{ genre.name }}</span>
+            <span v-if="genre.id === 27" class="badge text-bg-danger" style="margin: 2%;">{{ genre.name }}</span>
+            <span v-else-if="genre.id === 28 || genre.id === 53 || genre.id === 80" class="badge text-bg-warning" style="margin: 2%;">{{ genre.name }}</span>
+            <span v-else class="badge text-bg-light" style="margin: 2%;">{{ genre.name }}</span>
           </span>
+          <!-- <span v-for="genre in movie_genres" :key="genre.id">
+            <span class="badge text-bg-light" style="margin: 2%;">{{ genre.name }}</span>
+          </span> -->
           <small class="card-text" style="text-align: justify; width:100%; overflow: hidden; text-overflow: ellipsis;">{{ item.overview }}</small>
-          <small>{{item.popularity}}</small>
+          <!-- <small>{{item.popularity}}</small> -->
         </div>
       </div>
     </router-link>

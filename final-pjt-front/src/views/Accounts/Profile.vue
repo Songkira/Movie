@@ -2,7 +2,7 @@
   <div id="myprofile">
     <div id="myinfo" class="col-12" style="margin-left:5%;">
       <div style="display: flex;">
-        <img id="personimg" :src="require(`@/assets/catpic/cat_ (${person.catpic}).jpg`)" style="width:40%;">
+        <img v-if="this.person.length !== 0" id="personimg" :src="require(`@/assets/catpic/cat_ (${person?.catpic}).jpg`)" style="width:40%;">
         <div>
           <h2>{{ person.username }}</h2>
         </div>
@@ -13,9 +13,9 @@
           <h5>팔로워: {{ followerscnt }}</h5>
           <h5>팔로우: {{ followingscnt }}</h5>
         </div>
-        <button v-if="me.username != person.personname" type="button" class="btn btn-light m-2" @click="followThis">Follow</button>
+        <button v-if="me.username != person.username" type="button" class="btn btn-light m-2" @click="followThis">Follow</button>
       </div>
-      <button v-if="me.username == person.personname" type="button" class="btn btn-light m-2" @click="reviewGo">나의 영화 감상 기록</button>
+      <button v-if="me.username == person.username" type="button" class="btn btn-light m-2" @click="reviewGo">나의 영화 감상 기록</button>
     </div>
   </div>
 </template>
@@ -38,8 +38,6 @@ export default {
   created() {
     this.getPerson()
     this.getMyInfo()
-    console.log(234234)
-    console.log(this.$route.params.personname)
   },
   methods: {
     getPerson() {
@@ -57,12 +55,9 @@ export default {
               prmts.pk = res.data[i].id
               prmts.personname = res.data[i].username
               this.person = res.data[i]
-              console.log('&&&&&')
-              console.log(this.person.catpic)
               break
             }
           }
-          console.log(prmts)
           this.getPersonFollow(prmts.pk)
         })
         .catch(err => {
@@ -70,7 +65,6 @@ export default {
         })
     },
     getPersonFollow(personId) {
-      console.log(personId)
       axios({
         method: 'get',
         url: `${API_URL}/accounts-custom/${personId}/followinfo/`,
@@ -79,9 +73,6 @@ export default {
           }
       })
         .then(res => {
-          console.log(4444)
-          console.log(this.me)
-          console.log(this.person)
           this.followerscnt = res.data.followers.length
           this.followingscnt = res.data.followings.length
         })

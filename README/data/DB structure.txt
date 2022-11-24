@@ -11,3 +11,4 @@ movies_comment
 movies_director
 movies_genre
 movies_star
+movies_review

@@ -24,7 +24,7 @@ export default new Vuex.Store({
     usernofear: false,
     usernothrill: false,
     usersex: '',
-    usercatpic: 0,
+    usercatpic: 1,
     password: '',
     token: '',
     reviewRate: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -123,7 +123,7 @@ export default new Vuex.Store({
       state.usernothrill = false
       state.usersex = ''
       state.password = ''
-      state.usercatpic = 0
+      state.usercatpic = 1
     },
     CHANGESETTINGS(state, data) {
       console.log(data)
